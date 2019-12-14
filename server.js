@@ -22,7 +22,9 @@ app.get("/register", (req, res) => {
     res.sendFile(path.join(public, 'register.html'));
 })
 
-
+// app.post("/login", (req, res) => {
+//     console.log("log")
+// })
 
 app.use('/', express.static(public))
 

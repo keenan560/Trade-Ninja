@@ -4,3 +4,7 @@
  body {
      font-family: 'Stylish', sans-serif;
  }
+
+ button {
+     width: 100%;
+ }
