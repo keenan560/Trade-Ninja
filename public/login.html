@@ -37,7 +37,7 @@
     <h1 class="my-5 mx-auto text-center">Login to begin</h1>
 
     <div class="container">
-        <form id="login" method="POST"> 
+        <form id="login">
             <div class="form-group">
                 <label for='username'>Username</label>
                 <input type="text" class="form-control" id="username">
@@ -46,7 +46,7 @@
                 <label for="password">Password</label>
                 <input type="password" class="form-control" id="password">
             </div>
-            <button type="submit" class="btn btn-primary my-4">Ninja Log</button>
+            <button id='submit' type="submit" class="btn btn-primary my-4">Ninja Log</button>
         </form>
 
         <div id="alert-space">
@@ -71,7 +71,37 @@
 
     <script type='text/javascript'>
 
+        $("#submit").on("click", event => {
+            event.preventDefault();
+            let userName = $("#username").val();
+            let userPassword = $("#password").val();
 
+
+            let data = {
+                username: userName,
+                password: userPassword
+            }
+
+
+            $.ajax({
+                type: "POST",
+                contentType: "application/json",
+                url: "http://localhost:3000/auth",
+                data: JSON.stringify(data)
+
+            }).then((err, results) => {
+                if (err) {
+                    $("#alert-space").append(`<div class="alert alert-danger" role="alert">${err}</div>`)
+                }
+               
+
+                $("#alert-space").append(`<div class="alert alert-success" role="alert">${results}</div>`);
+                setTimeout(() => {
+                    $("#alert-space").empty();
+                    window.location = "./portfolio.html"
+                }, 3000);
+            })
+        })
 
     </script>
 </body>
