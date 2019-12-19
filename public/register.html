@@ -56,6 +56,7 @@
             <div class="form-group">
                 <label for='username'>Username</label>
                 <input type="text" class="form-control" id="username" name="username">
+                <div id='username-alert'></div>
             </div>
             <div class="form-group">
                 <label for="password">Password</label>
@@ -104,6 +105,39 @@
 
         })
 
+        $("#username").on("change", event => {
+            let userName = event.target.value;
+            console.log(userName);
+
+        
+
+            if (userNameNum(userName) === false || userNameLetter(userName) === false || userName.length === 0) {
+                $("#username-alert").html(`<div class="alert alert-danger" role="alert">Username must contain at least one number and at least letter</div>`);
+            } else {
+                let data = {
+                    username: userName
+                }
+
+                $.ajax({
+                    type: "POST",
+                    contentType: "application/json",
+                    url: "http://localhost:3000/users/username",
+                    data: JSON.stringify(data)
+                }).then((results) => {
+
+                    if (results === "Username exists!") {
+                        $("#username-alert").html(`<div class="alert alert-danger" role="alert">${results}</div>`);
+                    } else {
+                        $("#username-alert").html(`<div class="alert alert-success" role="alert">${results}</div>`);
+                    }
+
+                })
+
+            }
+
+
+
+        });
 
 
         $("#submit").on("click", event => {
@@ -116,12 +150,14 @@
             let password2 = $("#password2").val();
 
             if (first === "" || last === "" || email === "" || username === "" || password1 === "" || password2 === "") {
-                $("#form-alert").html(`<div class="alert alert-danger" role="alert">Please enter all Ninja inputs!</div>`);
+                $("#form-alert").empty();
+                $("#form-alert").append(`<div class="alert alert-danger" role="alert">Please enter all Ninja inputs!</div>`);
             }
 
 
             if (password1 !== password2 || password1.length < 5 || numberCounter(password1) === 0 || specLetterCounter(password1, specialLetters) === 0 || upperCaseCounter(password1) === 0) {
-                $("#alert-space").html(`<div class="alert alert-danger" role="alert"><p>-Password must contain at least 1 uppercase letter</p><p>-Password must contain both letters and numbers</p> <p>-Password must contain at least 1 special character i.e "!,#$.."</p><p>-Password must be at least 5 characters long</p></div>`);
+                $("form-alert").empty();
+                $("#form-alert").append(`<div class="alert alert-danger" role="alert"><p>Password must contain at least 1 uppercase letter</p><p>Password must contain both letters and numbers</p> <p>Password must contain at least 1 special character i.e "!,#$.."</p><p>Password must be at least 5 characters long</p></div>`);
 
             } else {
 
@@ -153,11 +189,26 @@
                 })
             }
 
+        });
 
+        const userNameNum = (username) => {
+            for (let i = 0; i < username.length; i++) {
+               if (!isNaN(parseInt(username[i]))) {
+                   return true;
+               }
+            }   
+            return false;
+        }
 
-
-
-        })
+        const userNameLetter = (username) => {
+            let alphabet = "abcdefghijklmnopqrstuvwxyz".split("");
+            for (let i = 0; i < username.length; i++) {
+                if (alphabet.includes(username[i])) {
+                    return true;
+                }
+            }
+            return false;
+        }
 
 
         const specLetterCounter = (password, specialLetters) => {

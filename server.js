@@ -37,7 +37,22 @@ app.get("/login", (req, res) => {
 
 app.get("/register", (req, res) => {
     res.sendFile(path.join(public, 'register.html'));
-})
+});
+
+app.post("/users/username", (req, res) => {
+    let userName = req.body.username;
+    let stmt = `SELECT * FROM users WHERE user_name = '${userName}'`;
+    connection.query(stmt, (err, results) => {
+        if (err) throw err;
+        
+        if(results.length !== 0) {
+            res.send("Username exists!");
+        } else {
+            res.send("Okay to use!");
+        }
+    })
+});
+
 
 app.post("/users", async (req, res) => {
  

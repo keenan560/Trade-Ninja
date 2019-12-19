@@ -91,7 +91,7 @@
 
             }).then((err, results) => {
                 if (err) {
-                    $("#alert-space").append(`<div class="alert alert-danger" role="alert">${err}</div>`)
+                    $("#alert-space").append(`<div class="alert alert-danger" role="alert">${err.message}</div>`)
                 }
                
 
