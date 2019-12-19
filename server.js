@@ -39,6 +39,18 @@ app.get("/register", (req, res) => {
     res.sendFile(path.join(public, 'register.html'));
 });
 
+app.post("/users/email", (req, res) => {
+    let email = req.body.email;
+    let stmt = `SELECT * FROM users WHERE email_address = '${email}'`;
+    connection.query(stmt, (err, results) => {
+        if (err) throw err;
+
+        if(results.length > 0) {
+            res.send("Cannot use this email address.");
+        } 
+    })
+});
+
 app.post("/users/username", (req, res) => {
     let userName = req.body.username;
     let stmt = `SELECT * FROM users WHERE user_name = '${userName}'`;
