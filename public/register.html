@@ -40,7 +40,7 @@
         <div class='my-3' id="form-alert">
 
         </div>
-        <form id="register" >
+        <form id="register">
             <div class="form-group">
                 <label for='first'>First Name</label>
                 <input type="text" class="form-control" id="first" name="first">
@@ -52,7 +52,7 @@
             <div class="form-group">
                 <label for='email'>Email Address</label>
                 <input type="email" class="form-control" id="email" name="email">
-                <div class=''id="email-alert"></div>
+                <div class='' id="email-alert"></div>
             </div>
             <div class="form-group">
                 <label for='username'>Username</label>
@@ -108,7 +108,7 @@
 
         $("#email").on("change", event => {
             let email = event.target.value;
-            
+
             if (!validEmail(email)) {
                 $("#email-alert").html(`<div class="alert alert-danger" role="alert">Not a valid email address</div>`);
                 setTimeout(() => {
@@ -119,16 +119,25 @@
                     email: email
                 }
 
-                   $.ajax({
+                $.ajax({
                     type: "POST",
                     contentType: "application/json",
                     url: "http://localhost:3000/users/email",
                     data: JSON.stringify(data)
                 }).then((results) => {
 
-                    if (results === "Cannot use this email address.") {
+                    if (results === "Cannot use this email.") {
                         $("#email-alert").html(`<div class="alert alert-danger" role="alert">${results}</div>`);
-                    } else {
+                        setTimeout(() => {
+                            $("#email-alert").empty()
+                        }, 3000)
+                    } else if (results === "Okay to use.") {
+                        $("#email-alert").html(`<div class="alert alert-success" role="alert">${results}</div>`);
+                        setTimeout(() => {
+                            $("#email-alert").empty()
+                        }, 3000)
+                    }
+                    else {
                         $("#email-alert").empty();
                     }
 

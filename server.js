@@ -23,7 +23,7 @@ const app = express();
 app.use('/', express.static(public));
 app.use(bodyParser.json());
 app.use(cookieParser());
-app.use(session({secret: 'Ninja secret!'}));
+app.use(session({ secret: 'Ninja secret!' }));
 
 
 app.get("/", (req, res) => {
@@ -41,13 +41,16 @@ app.get("/register", (req, res) => {
 
 app.post("/users/email", (req, res) => {
     let email = req.body.email;
+    console.log(req.body.email)
     let stmt = `SELECT * FROM users WHERE email_address = '${email}'`;
     connection.query(stmt, (err, results) => {
         if (err) throw err;
-
-        if(results.length > 0) {
-            res.send("Cannot use this email address.");
-        } 
+        console.log(results)
+        if (results.length === 0) {
+            res.send("Okay to use.")
+        } else {
+            res.send("Cannot use this email.")
+        }
     })
 });
 
@@ -56,8 +59,8 @@ app.post("/users/username", (req, res) => {
     let stmt = `SELECT * FROM users WHERE user_name = '${userName}'`;
     connection.query(stmt, (err, results) => {
         if (err) throw err;
-        
-        if(results.length !== 0) {
+
+        if (results.length !== 0) {
             res.send("Username exists!");
         } else {
             res.send("Okay to use!");
@@ -67,7 +70,7 @@ app.post("/users/username", (req, res) => {
 
 
 app.post("/users", async (req, res) => {
- 
+
     try {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(req.body.password, salt);
@@ -76,11 +79,14 @@ app.post("/users", async (req, res) => {
         connection.query(stmt, [values], (err, results) => {
             if (err) {
                 return console.error(err.message);
-            }
-            res.status(201).send("Ninja add successful!");
+            } 
+            
+            res.send("Ninja add successful!");
+            
+
         });
     } catch {
-        res.status(500).send("Ninja add fail!");
+        res.send("Ninja add fail!");
     }
 
 
@@ -95,21 +101,24 @@ app.post("/auth", async (req, res) => {
 
         if (results.length === 0) {
             return res.status(400).send('Cannot find username');
-        }
+        } else {
+            try {
 
-        try {
-
-            if (await bcrypt.compare(req.body.password, results.password)) {
-                console.log(true)
-                res.sendStatus(200);
-            } else {
-                console.log(false)
-                res.sendStatus(404);
+                if (await bcrypt.compare(req.body.password, results.password)) {
+                    console.log(true)
+                    res.sendStatus(200);
+                    res.redirect('http:localhost3000:/about.html    ')
+                } else {
+                    console.log(false)
+                    res.sendStatus(404);
+                }
+            }
+            catch {
+                res.status(500).send();
             }
         }
-        catch {
-            res.status(500).send();
-        }
+
+
 
     });
 
