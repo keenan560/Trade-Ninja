@@ -79,10 +79,10 @@ app.post("/users", async (req, res) => {
         connection.query(stmt, [values], (err, results) => {
             if (err) {
                 return console.error(err.message);
-            } 
-            
+            }
+
             res.send("Ninja add successful!");
-            
+
 
         });
     } catch {
@@ -100,24 +100,23 @@ app.post("/auth", async (req, res) => {
         console.log(results);
 
         if (results.length === 0) {
-            return res.status(400).send('Cannot find username');
-        } else {
-            try {
+            return res.send('Username does not exist');
+        } 
 
-                if (await bcrypt.compare(req.body.password, results.password)) {
-                    console.log(true)
-                    res.sendStatus(200);
-                    res.redirect('http:localhost3000:/about.html    ')
+        if (results.length > 0) {
+            try {
+                if (await bcrypt.compare(req.body.password, results[0].password)) {
+                    
+                    res.send("Login successful!");
                 } else {
-                    console.log(false)
-                    res.sendStatus(404);
+
+                    res.send("Invalid credentials!");
                 }
             }
             catch {
-                res.status(500).send();
+                res.sendStatus(500);
             }
         }
-
 
 
     });
