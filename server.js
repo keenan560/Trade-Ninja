@@ -23,11 +23,13 @@ const app = express();
 app.use('/', express.static(public));
 app.use(bodyParser.json());
 app.use(cookieParser());
-app.use(session({ secret: 'Ninja secret!' }));
+app.use(session({secret: "ninja", cookie: {maxAge: 60000}}));
 
 
 app.get("/", (req, res) => {
-
+    if (req.session.views) {
+        req.s
+    }
     res.sendFile(path.join(public, 'login.html'));
 })
 
@@ -101,12 +103,12 @@ app.post("/auth", async (req, res) => {
 
         if (results.length === 0) {
             return res.send('Username does not exist');
-        } 
+        }
 
         if (results.length > 0) {
             try {
                 if (await bcrypt.compare(req.body.password, results[0].password)) {
-                    
+
                     res.send("Login successful!");
                 } else {
 

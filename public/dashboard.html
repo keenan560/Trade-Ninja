@@ -37,17 +37,7 @@
     <h1 class="my-5 mx-auto text-center">Login to begin</h1>
 
     <div class="container">
-        <form id="login">
-            <div class="form-group">
-                <label for='username'>Username</label>
-                <input type="text" class="form-control" id="username">
-            </div>
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" class="form-control" id="password">
-            </div>
-            <button id='submit' type="submit" class="btn btn-primary my-4">Ninja Log</button>
-        </form>
+        <h1 id='welcome'>Welcome</h1>
 
         <div id="alert-space">
 
@@ -97,16 +87,16 @@
                 }
 
                 if (results === "Invalid credentials!") {
-                     $("#alert-space").html(`<div class="alert alert-danger" role="alert">${results}</div>`);
+                    $("#alert-space").htm(`<div class="alert alert-danger" role="alert">${results}</div>`);
                     setTimeout(() => {
                         $("#alert-space").empty();
                     }, 3000);
                 }
 
                 if (results === "Login successful!") {
-                       $("#alert-space").html(`<div class="alert alert-success" role="alert">${results}</div>`);
+                    $("#alert-space").html(`<div class="alert alert-success" role="alert">${results}</div>`);
                     setTimeout(() => {
-                       window.location = "about.html"
+                        window.location = "about.html"
                     }, 3000);
                 }
 
