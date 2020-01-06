@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+        crossorigin="anonymous">
+    <link rel="stylesheet" href="./css/style.css">
+    <title>Trade Ninja</title>
+</head>
+
+<body>
+
+    <div class="container mx-auto">
+        <nav class="navbar navbar-expand-lg text-white navbar-dark bg-dark">
+            <a class="navbar-brand" href="/login">Ninja</a>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item ">
+                        <a class="nav-link text-white" href='/about'>About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="/register">Sign Up</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="/login">Login</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </div>
+
+
+
+    <h1 class="my-5 mx-auto text-center">Ninja Register</h1>
+
+    <div class="container">
+        <div class='my-3' id="form-alert">
+
+        </div>
+        <form id="register">
+            <div class="form-group">
+                <label for='first'>First Name</label>
+                <input type="text" class="form-control" id="first" name="first">
+            </div>
+            <div class="form-group">
+                <label for='last'>Last Name</label>
+                <input type="text" class="form-control" id="last" name="last">
+            </div>
+            <div class="form-group">
+                <label for='email'>Email Address</label>
+                <input type="email" class="form-control" id="email" name="email">
+                <div class='' id="email-alert"></div>
+            </div>
+            <div class="form-group">
+                <label for='username'>Username</label>
+                <input type="text" class="form-control" id="username" name="username">
+                <div id='username-alert'></div>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" class="form-control" id="password1" name="password1">
+            </div>
+            <div class="form-group">
+                <label for="password">Re-enter Password</label>
+                <input type="password" class="form-control" id="password2" name="password2">
+                <div class="my-3" id='password-alert'>
+
+                </div>
+            </div>
+            <button style='width:100%'id='submit' type="submit" class="btn btn-info my-4">Ninja Register</button>
+        </form>
+
+        <div id="alert-space">
+
+        </div>
+    </div>
+
+
+
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+        crossorigin="anonymous"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.4.1.js" integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
+        crossorigin="anonymous"></script>
+
+    <script type='text/javascript'>
+
+        let specialLettersCount = 0;;
+        let capCount = 0;
+        let numCount = 0;
+        let specialLetters = "~!@#$%^&*()_+?<>{}[].:;',".split("");
+
+        $("#password2").on("keyup", event => {
+            if ($("#password1").val() !== $("#password2").val() || $("#password1").val().length === 0) {
+                $("#password-alert").html(`<div class="alert alert-warning" role="alert">Passwords do not match</div>`);
+            } else {
+                $("#password-alert").html(`<div class="alert alert-success" role="alert">Passwords match!</div>`)
+            }
+
+        });
+
+        $("#email").on("change", event => {
+            let email = event.target.value;
+
+            if (!validEmail(email)) {
+                $("#email-alert").html(`<div class="alert alert-danger" role="alert">Not a valid email address</div>`);
+                setTimeout(() => {
+                    $("#email-alert").empty();
+                })
+            } else {
+                let data = {
+                    email: email
+                }
+
+                $.ajax({
+                    type: "POST",
+                    contentType: "application/json",
+                    url: "http://localhost:3000/users/email",
+                    data: JSON.stringify(data)
+                }).then((results) => {
+
+                    if (results === "Cannot use this email.") {
+                        $("#email-alert").html(`<div class="alert alert-danger" role="alert">${results}</div>`);
+                        setTimeout(() => {
+                            $("#email-alert").empty()
+                        }, 3000)
+                    } else if (results === "Okay to use.") {
+                        $("#email-alert").html(`<div class="alert alert-success" role="alert">${results}</div>`);
+                        setTimeout(() => {
+                            $("#email-alert").empty()
+                        }, 3000)
+                    }
+                    else {
+                        $("#email-alert").empty();
+                    }
+
+                })
+            }
+        })
+
+        $("#username").on("change", event => {
+            let userName = event.target.value;
+            console.log(userName);
+
+            if (userNameNum(userName) === false || userNameLetter(userName) === false || userName.length === 0) {
+                $("#username-alert").html(`<div class="alert alert-danger" role="alert">Username must contain at least one number and at least letter</div>`);
+            } else {
+                let data = {
+                    username: userName
+                }
+
+                $.ajax({
+                    type: "POST",
+                    contentType: "application/json",
+                    url: "http://localhost:3000/users/username",
+                    data: JSON.stringify(data)
+                }).then((results) => {
+
+                    if (results === "Username exists!") {
+                        $("#username-alert").html(`<div class="alert alert-danger" role="alert">${results}</div>`);
+                    } else {
+                        $("#username-alert").html(`<div class="alert alert-success" role="alert">${results}</div>`);
+                    }
+
+                })
+
+            }
+
+        });
+
+
+        $("#submit").on("click", event => {
+            event.preventDefault();
+            let first = $("#first").val();
+            let last = $("#last").val();
+            let email = $("#email").val();
+            let username = $("#username").val();
+            let password1 = $("#password1").val();
+            let password2 = $("#password2").val();
+
+            if (first === "" || last === "" || email === "" || username === "" || password1 === "" || password2 === "") {
+                $("#form-alert").empty();
+                $("#form-alert").html(`<div class="alert alert-danger" role="alert">Please enter all Ninja inputs!</div>`);
+            }
+
+
+            if (password1 !== password2 || password1.length < 5 || numberCounter(password1) === 0 || specLetterCounter(password1, specialLetters) === 0 || upperCaseCounter(password1) === 0) {
+                $("form-alert").empty();
+                $("#form-alert").html(`<div class="alert alert-danger" role="alert"><p>Password must contain at least 1 uppercase letter</p><p>Password must contain both letters and numbers</p> <p>Password must contain at least 1 special character i.e "!,#$.."</p><p>Password must be at least 5 characters long</p></div>`);
+
+            } else {
+
+                let user = {
+                    firstName: first,
+                    lastName: last,
+                    emailAddress: email,
+                    userName: username,
+                    password: password1
+                }
+
+                $.ajax({
+                    type: "POST",
+                    contentType: "application/json",
+                    url: "http://localhost:3000/users",
+                    data: JSON.stringify(user)
+
+                }).then((err, results) => {
+                    console.log(results);
+                    $("#register")[0].reset();
+                    $("#form-alert").empty();
+                    $("#password-alert").empty();
+                    $("#username-alert").empty();
+
+                    $("#alert-space").html(`<div class="alert alert-success" role="alert">${results}</div>`);
+                    setTimeout(() => {
+                        $("#alert-space").empty();
+                        window.location = "login"
+                    }, 3000)
+                })
+            }
+
+        });
+
+        const validEmail = (email) => {
+            let atSymbolCount = 0;
+            for (let i = 0; i < email.length; i++) {
+                if (email[i] === "@") {
+                    atSymbolCount += 1;
+                }
+            }
+
+            if (atSymbolCount === 1) {
+                return true
+            }
+
+            return false;
+        }
+
+        const userNameNum = (username) => {
+            for (let i = 0; i < username.length; i++) {
+                if (!isNaN(parseInt(username[i]))) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        const userNameLetter = (username) => {
+            let alphabet = "abcdefghijklmnopqrstuvwxyz".split("");
+            for (let i = 0; i < username.length; i++) {
+                if (alphabet.includes(username[i])) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+
+        const specLetterCounter = (password, specialLetters) => {
+            for (let i = 0; i < password.length; i++) {
+                if (specialLetters.includes(password[i])) {
+                    specialLettersCount += 1;
+                }
+            }
+            return specialLettersCount;
+        }
+
+        const upperCaseCounter = (password) => {
+            for (let i = 0; i < password.length; i++) {
+                if (password1[i] === password[i].toUpperCase()) {
+                    capCount += 1;
+                }
+            }
+            return specialLettersCount;
+        }
+
+        const numberCounter = (password) => {
+            for (let i = 0; i < password.length; i++) {
+                if (typeof parseInt(password[i]) === 'number') {
+                    numCount += 1;
+                }
+            }
+            return numCount;
+        }
+
+    </script>
+</body>
+
+</html>
