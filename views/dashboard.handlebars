@@ -25,7 +25,7 @@
 
         <p>Let's get ready to begin your journey as a Ninja Trader! Choose your path:</p>
         <ul class="list-group">
-            <li class="list-group-item"><a href="https://www.cnbc.com"><button style='width: 100%' class="btn btn-lg btn-dark text-white"><imgclass='mx-1 ' width="30" length='30' src='./layouts/css/images/news.png'>News</button></a></li>
+            <li class="list-group-item"><a href="https://www.cnbc.com"><button style='width: 100%' class="btn btn-lg btn-dark text-white"><img class='mx-1 ' width="30" length='30' src='./layouts/css/images/news.png'>News</button></a></li>
             <li class="list-group-item"><a href="/portfolio"><button style='width: 100%' class="btn btn-lg btn-dark text-white"><img class='mx-1 ' width="30" length='30' src='./layouts/css/images/portfolio.png'>Portfolio</button></a></li>
             <li class="list-group-item"><a href="/history"><button style='width: 100%' class="btn btn-lg btn-dark"><img class='mx-1' width="30" length='30' src='./layouts/css/images/history.png'>
                 History</button></a></li>
@@ -62,7 +62,7 @@
                 console.log(results);
 
                 if (results === "Ninja vanish!") {
-                    $("#alert-space").append(`<div class="alert alert-secondary my-3" role="alert">${results}</div>`);
+                    $("#alert-space").append(`<div class="alert alert-warning my-3" role="alert">${results}</div>`);
                     setTimeout(() => {
                         window.location = 'login'
                     }, 3000);

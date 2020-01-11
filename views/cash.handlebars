@@ -1,12 +1,171 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>{{title}}</title>
 </head>
+
 <body>
-    <h1>{{userName}}</h1>
+   
+    <div class="container mx-auto">
+
+
+        <div class="container my-5" id='welcome'>
+            <h1 class="my-3 text-center">Ninja Add or Ninja Subtract</h1>
+            <div id='balance'>
+                <p id='current-bal' class="float-right h4 text-success">{{balance}}</p>
+            </div>
+            <form id='funds-form' class='my-3'>
+
+                <label id='current'> </label>
+                <div class="form-group">
+                    <label for="exampleFormControlSelect1">Trans Type</label>
+                    <select class="form-control" id="trans-type">
+                        <option value="">Choose</option>
+                        <option value="deposit"> Add Cash</option>
+                        <option value="withdraw">Cash Out</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="formGroupExampleInput">Amount</label>
+                    <input type="text" class="form-control" id="amount" placeholder="$100,000">
+                </div>
+                <label id='current'> </label>
+                <div class="form-group">
+                    <label for="exampleFormControlSelect1">Account</label>
+                    <select class="form-control" id="account">
+                        <option value="">Choose</option>
+                        <option value="TD Ameritrade ..5689">TD Ameritrade ..5689</option>
+                        <option value="E*TRADE ..4423">E*TRADE ..4423</option>
+                        <option value="Charles Schwab ..7753">Charles Schwab ..7753</option>
+
+                    </select>
+                </div>
+                <div class="containter text-center">
+                    <button style="width:100%" id="ninja-cash" type="submit" class="btn btn-primary btn-lg text-center">Ninja
+                        Cash!</button>
+                </div>
+
+            </form>
+
+        </div>
+
+        <div id='alert-space' class='container my-5 text-center'>
+
+        </div>
+
+    </div>
+
+
+
+
+
+
+    <!-- Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+        crossorigin="anonymous"></script>
+
+    <!-- jquery -->
+    <script src="https://code.jquery.com/jquery-3.4.1.js" integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
+        crossorigin="anonymous"></script>
+
+    <script type='text/javascript'>
+
+
+        $(document).on("click", "#ninja-cash", (event) => {
+            event.preventDefault();
+            let transType = $("#trans-type").val();
+            var amount = $("#amount").val();
+            var amount = parseFloat(amount);
+            var account = $("#account").val();
+            var currentBal = $("#current-bal").val();
+    
+            console.log(currentBal)
+
+
+            if (transType === "deposit") {
+                var data = {
+                    transType: transType,
+                    amount: amount,
+                    account: account
+                }
+
+                $.ajax({
+                    type: "POST",
+                    url: "http://localhost:3000/cash",
+                    contentType: "application/json",
+                    data: JSON.stringify(data)
+                }).then(results => {
+
+                    $("#funds-form")[0].reset();
+                    $("#alert-space").append(`<div class="alert alert-success" role="alert">Your funds were added successfully!</div>`);
+
+                    setTimeout(() => {
+                        $("#alert-space").fadeOut(3);
+                        window.location.replace("./trade");
+                    }, 3000);
+
+                })
+
+
+
+
+            }
+
+
+            if (transType === "withdraw" && currentBal  >= amount) {
+                var data = {
+                    transType: transType,
+                    amount: amount * -1,
+                    account: account
+                }
+                console.log(data.amount)
+                $.ajax({
+                    type: "POST",
+                    url: "http://localhost:3000/cash",
+                    contentType: "application/json",
+                    data: JSON.stringify(data)
+                }).then(results => {
+                    $("#funds-form")[0].reset();
+                    $("#alert-space").append(`<div class="alert alert-success" role="alert">You cashed out; please wait time 2-3 business days!</div>`);
+                    setTimeout(() => {
+                        $("#alert-space").fadeOut(3);
+                        window.location.replace("./dashboard");
+                    }, 3000);
+
+                })
+
+
+
+
+
+            } else if (transType === "withdraw" && currentBal < amount) {
+
+                $("#alert-space").append(`<div class="alert alert-danger" role="alert">Request denied! Not enough funds.</div>`);
+
+                setTimeout(() => {
+                    $("#alert-space").empty();
+
+                }, 3000)
+            }
+
+
+
+        })
+
+        const numFormat = num => {
+
+            return '$' + num.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+        }
+
+    </script>
 </body>
+
 </html>

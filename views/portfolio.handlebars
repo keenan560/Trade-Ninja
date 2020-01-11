@@ -9,14 +9,52 @@
 </head>
 
 <body>
-    <h1>{{userName}}'s Holdings</h1>
+    <div class="container mx-auto">
+        <div class="row my-3">
+                <div class="container col-12">
+                    <a class='float-left' href="/dashboard">
+                        <div class="btn btn-lg btn-primary">Back</div>
+                    </a>
+                    <a class='float-right' href="/trade">
+                        <div class="btn btn-lg btn-primary">Trade</div>
+                    </a>
+                </div>
+        </div>
+   
+        <h1 class="text-center my-3">Holdings</h1>
+
+        <table class="table">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Ticker</th>
+                    <th scope="col">Desc</th>
+                    <th scope="col">Price Acquired</th>
+                    <th scope="col">Market Price</th>
+                    <th scope="col">Delta</th>
+                    <th scope="col">Quantity</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">iD</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{holdings}}
+            </tbody>
+        </table>
+    </div>
 
 
 
     <script type="text/javascript">
-      
-      
-    </script>
+
+        $(document).ready(() => {
+          $.ajax({
+              type: "GET",
+              contentType: "application/json",
+              url: "http://localhost:3000/:user_name/holdings";
+              
+          })  
+        })
+    </script>   
 </body>
 
 

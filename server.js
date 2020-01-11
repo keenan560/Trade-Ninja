@@ -74,7 +74,10 @@ app.use((req, res, next) => {
 app.engine('handlebars', hbs());
 app.set('view engine', 'handlebars');
 
+const numFormat = num => {
 
+    return '$' + num.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+}
 
 // ***** ROUTES ******
 app.get("/", redirectHome, (req, res) => {
@@ -95,7 +98,7 @@ app.get("/register", redirectHome, (req, res) => {
 
 app.get("/dashboard", redirectLogin, (req, res) => {
     const { user } = res.locals;
-    console.log(req.session)
+    // console.log(req.session)
     res.render('dashboard', { firstName: user.first_name });
 
 });
@@ -111,7 +114,24 @@ app.get("/portfolio", redirectLogin, (req, res) => {
 
 app.get("/cash", redirectLogin, (req, res) => {
     const { user } = res.locals;
-    res.render('cash', { title: 'Cash', userName: user.user_name });
+    connection.query(`SELECT * FROM CASH WHERE user_name = '${user.user_name}'`, (err, results) => {
+        if (err) throw err;
+        // console.log(results.length);
+        if (results.length === 0) {
+            res.render('cash', { title: 'Cash', userName: user.user_name, balance: '$0.00' });
+        }
+
+        if (results.length > 0) {
+            let bal = 0;
+            results.forEach(trans => {
+                bal += trans.amount;
+            })
+            res.render('cash', { title: 'Cash', userName: user.user_name, balance: numFormat(bal) });
+
+        }
+
+    })
+
 });
 
 app.get("/history", redirectLogin, (req, res) => {
@@ -120,8 +140,8 @@ app.get("/history", redirectLogin, (req, res) => {
 });
 
 app.get("/trade", redirectLogin, (req, res) => {
-    const {user} = res.locals;
-    res.render('trade', {title: 'Trade', userName: user.user_name});
+    const { user } = res.locals;
+    res.render('trade', { title: 'Trade', userName: user.user_name });
 })
 
 app.post("/users/email", (req, res) => {
@@ -209,6 +229,33 @@ app.post("/auth", async (req, res) => {
 
 
 })
+
+app.post('/cash', (req, res) => {
+    const { user } = res.locals;
+    console.log(req.body)
+    let stmt = `INSERT INTO cash (user_name, trans_type, amount, account) VALUES (?)`;
+    let values = [user.user_name, req.body.transType, req.body.amount, req.body.account];
+
+    connection.query(stmt, [values], (err, results) => {
+        if (err) throw err;
+        console.log(results);
+        connection.query(`SELECT * FROM cash WHERE user_name = '${user.user_name}'`, (err, results) => {
+            if (err) throw err;
+
+            if (results.length > 0) {
+                let bal = 0;
+                results.forEach(trans => {
+                    bal += trans.amount;
+                })
+                res.render('cash', { title: 'Cash', userName: user.user_name, balance: numFormat(bal) });
+
+            }
+
+        })
+
+    })
+});
+
 
 
 app.post('/logout', redirectLogin, (req, res) => {
