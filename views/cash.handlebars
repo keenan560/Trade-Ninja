@@ -9,7 +9,7 @@
 </head>
 
 <body>
-   
+
     <div class="container mx-auto">
 
 
@@ -85,9 +85,7 @@
             var amount = $("#amount").val();
             var amount = parseFloat(amount);
             var account = $("#account").val();
-            var currentBal = $("#current-bal").val();
-    
-            console.log(currentBal)
+
 
 
             if (transType === "deposit") {
@@ -103,6 +101,7 @@
                     contentType: "application/json",
                     data: JSON.stringify(data)
                 }).then(results => {
+
 
                     $("#funds-form")[0].reset();
                     $("#alert-space").append(`<div class="alert alert-success" role="alert">Your funds were added successfully!</div>`);
@@ -120,42 +119,50 @@
             }
 
 
-            if (transType === "withdraw" && currentBal  >= amount) {
-                var data = {
-                    transType: transType,
-                    amount: amount * -1,
-                    account: account
-                }
-                console.log(data.amount)
-                $.ajax({
-                    type: "POST",
-                    url: "http://localhost:3000/cash",
-                    contentType: "application/json",
-                    data: JSON.stringify(data)
-                }).then(results => {
-                    $("#funds-form")[0].reset();
-                    $("#alert-space").append(`<div class="alert alert-success" role="alert">You cashed out; please wait time 2-3 business days!</div>`);
-                    setTimeout(() => {
-                        $("#alert-space").fadeOut(3);
-                        window.location.replace("./dashboard");
-                    }, 3000);
+            if (transType === "withdraw") {
 
+                $.get('http://localhost:3000/cash/users', (data, status) => {
+                    console.log(data);
+                    let currBal = 0;
+                    data.forEach(trans => {
+                        currBal += trans.amount;
+                    });
+
+                    if (currBal >= amount) {
+                        var data = {
+                            transType: transType,
+                            amount: amount * -1,
+                            account: account
+                        }
+
+
+                        $.ajax({
+                            type: "POST",
+                            url: "http://localhost:3000/cash",
+                            contentType: "application/json",
+                            data: JSON.stringify(data)
+                        }).then(results => {
+                            $("#funds-form")[0].reset();
+                            $("#alert-space").append(`<div class="alert alert-success" role="alert">You cashed out; please wait time 2-3 business days!</div>`);
+                            setTimeout(() => {
+                                $("#alert-space").fadeOut(3);
+                                window.location.replace("./dashboard");
+                            }, 3000);
+
+                        })
+                    } else {
+
+                        $("#alert-space").append(`<div class="alert alert-danger" role="alert">Request denied! Not enough funds.</div>`);
+
+                        setTimeout(() => {
+                            $("#alert-space").empty();
+
+                        }, 3000)
+                    }
                 })
 
 
-
-
-
-            } else if (transType === "withdraw" && currentBal < amount) {
-
-                $("#alert-space").append(`<div class="alert alert-danger" role="alert">Request denied! Not enough funds.</div>`);
-
-                setTimeout(() => {
-                    $("#alert-space").empty();
-
-                }, 3000)
             }
-
 
 
         })

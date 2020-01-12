@@ -134,6 +134,15 @@ app.get("/cash", redirectLogin, (req, res) => {
 
 });
 
+app.get("/cash/users", redirectLogin, (req, res) => {
+    const { user } = res.locals;
+    connection.query(`SELECT * FROM CASH WHERE user_name = '${user.user_name}'`, (err, results) => {
+        if (err) throw err;
+        res.send(results);
+    })
+
+});
+
 app.get("/history", redirectLogin, (req, res) => {
     const { user } = res.locals;
     res.render('history', { title: 'History', userName: user.user_name });
@@ -247,7 +256,7 @@ app.post('/cash', (req, res) => {
                 results.forEach(trans => {
                     bal += trans.amount;
                 })
-                res.render('cash', { title: 'Cash', userName: user.user_name, balance: numFormat(bal) });
+                res.render('cash', {title: 'Cash', userName: user.user_name, balance: numFormat(bal)});
 
             }
 
