@@ -7,6 +7,307 @@
     <title>{{title}}</title>
 </head>
 <body>
-    {{userName}}
+
+    <div class="container mx-auto">
+        
+        <div class="container my-5" id='welcome'>
+            <h1 class="text-center"> Place an order</h1>
+            <div class='text-right h4 text-success' id='balance'>Cash Available: {{balance}}</div>
+            <form id='trade-form' class='my-3'>
+                <div class="form-group">
+                    <label for="formGroupExampleInput">Ticker</label>
+                    <input type="text" class="form-control" id="ticker" placeholder="AAPL">
+                </div>
+                <label id='current'> </label>
+                <div class="form-group">
+                    <label for="exampleFormControlSelect1">Order Type</label>
+                    <select class="form-control" id="order-type">
+                        <option value="">Choose</option>
+                        <option value="Buy">Buy</option>
+                        <option value="Sell">Sell</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="formGroupExampleInput2">Price</label>
+                    <input type="text" class="form-control" id="price" placeholder="259.47">
+                </div>
+                <div class="form-group">
+                    <label for="formGroupExampleInput2">Quantity</label>
+                    <input type="text" class="form-control" id="quantity" placeholder="1000">
+                </div>
+                <div id="total">
+
+                </div>
+                <div class="containter text-center">
+                    <button style='width:100%'id="order" type="submit" class="btn btn-primary btn-lg text-center">Ninja Trade!</button>
+                </div>
+
+            </form>
+
+        </div>
+
+        <div id='alert-space' class='container my-5 text-center'>
+
+        </div>
+
+    </div>
+
+
+
+
+
+
+    <!-- Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+        crossorigin="anonymous"></script>
+
+    <!-- jquery -->
+    <script src="https://code.jquery.com/jquery-3.4.1.js" integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
+        crossorigin="anonymous"></script>
 </body>
+
+<script type='text/javascript'>
+    let ticketData = JSON.parse(localStorage.getItem('tickets')) || [];
+    let portfolio = JSON.parse(localStorage.getItem('portfolio')) || [];
+    let updated = [];
+    let accountBal = parseInt(JSON.parse(localStorage.getItem('balance'))) || 0;
+
+    let today = new Date();
+    let date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
+    let time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+    let timeStamp = date + ' ' + time;
+
+
+    const apikey = "R44O6BSRP4WH9B1Y"
+    const apiURL = `https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=MSFT&interval=5min&apikey=${apikey}`;
+
+    let userPrice = parseFloat($("#price").val());
+
+
+    $(document).ready(() => {
+        {{!-- $("#balance").html(`<p class='text-right h4 text-success'>Cash Avaibale: ${numFormat(accountBal)}</p>`)
+        console.log(portfolio); --}}
+    })
+
+    $(document).on("click", "#order", (event) => {
+        event.preventDefault();
+
+
+        let ticker = $("#ticker").val() 
+        let orderType = $("#order-type").val();
+        let price = $("#price").val()
+        let quantity = $("#quantity").val()
+        let total = parseFloat(price) * parseInt(quantity);
+
+        if (orderType === "Buy" && accountBal < total) {
+
+            $("#alert-space").append(`<div class="alert alert-danger" role="alert">You do not have enough funds!</div>`);
+
+            setTimeout(() => {
+                $("#alert-space").empty()
+
+            }, 3000)
+
+        }
+
+        if (orderType === 'Buy' && accountBal >= total) {
+
+
+            let order = {
+                ticker: ticker,
+                transType: orderType,
+                price: price,
+                quantity: quantity,
+                timeStamp: timeStamp
+            }
+
+
+            if (portfolio.length === 0) {
+                ticketData.push(order);
+                localStorage.setItem('tickets', JSON.stringify(ticketData));
+
+                accountBal -= total;
+                localStorage.setItem('balance', JSON.stringify(accountBal));
+
+                portfolio.push(order);
+                localStorage.setItem('portfolio', JSON.stringify(portfolio))
+            } else {
+
+
+
+                ticketData.push(order);
+                localStorage.setItem('tickets', JSON.stringify(ticketData));
+
+
+                accountBal -= total;
+                localStorage.setItem('balance', JSON.stringify(accountBal));
+
+                // update existing stock
+                for (let i = 0; i < portfolio.length; i++) {
+                    if (order.ticker.toLowerCase() === portfolio[i].ticker.toLowerCase()) {
+                        let newStock = parseInt(portfolio[i].quantity) + parseInt(order.quantity);
+                        portfolio[i][quantity] = newStock;
+                    }
+
+                }
+
+                portfolio.push(order);
+                localStorage.setItem('portfolio', JSON.stringify(portfolio));
+
+            }
+
+
+            $("#trade-form")[0].reset();
+
+            $("#alert-space").append(`<div class="alert alert-success" role="alert">Your order was place successfully!</div>`);
+
+            setTimeout(() => {
+                $("#alert-space").fadeOut(3);
+                window.location.replace("./history.html");
+            }, 3000)
+
+
+        }
+
+
+        if (orderType === "Sell") {
+
+            let order = {
+                ticker: ticker,
+                transType: orderType,
+                price: price,
+                quantity: quantity,
+                timeStamp: timeStamp
+            }
+
+
+            if (symbolCheck(portfolio, order)) {
+                accountBal += total;
+                localStorage.setItem('balance', JSON.stringify(accountBal));
+                ticketData.push(order)
+                localStorage.setItem('tickets', JSON.stringify(ticketData));
+
+
+                // reducing the quantity by amount sold
+                for (let i = 0; i < portfolio.length; i++) {
+                    if (portfolio[i].ticker.toLowerCase() === order.ticker.toLowerCase()) {
+                        portfolio[i].quantity -= order.quantity;
+                    }
+                }
+
+
+                let results = [];
+                // filerting portfolio for 0 holdings
+                for (let i = 0; i < portfolio.length; i++) {
+                    console.log(portfolio[i])
+                    if (portfolio[i].quantity !== 0) {
+
+                        results.push(portfolio[i]);
+                    }
+                }
+
+                localStorage.setItem('portfolio', JSON.stringify(results));
+
+                $("#trade-form")[0].reset();
+
+                $("#alert-space").append(`<div class="alert alert-success" role="alert">Your order was place successfully!</div>`);
+
+                setTimeout(() => {
+                    $("#alert-space").fadeOut(3);
+                    window.location.replace("./history.html");
+                }, 3000)
+
+
+            } else {
+                $("#alert-space").append(`<div class="alert alert-warning" role="alert">Order not successful! Please check holdings</div>`);
+
+                setTimeout(() => {
+                    $("#alert-space").empty();
+                    // window.location.replace("./portfolio.html");
+                }, 3000)
+            }
+
+
+
+        }
+
+
+
+
+    })
+
+    $("#ticker").change((event) => {
+        let userTicker = event.target.value;
+        const apiURL = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${userTicker}&apikey=${apikey}`;
+
+        let keyURL = `https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=${userTicker}&apikey=${apikey}`;
+
+        $.get(keyURL, data => {
+            console.log(data);
+            $("#current").empty();
+            let shareCount = 0;
+
+            for (let i = 0; i < portfolio.length; i++) {
+                if (portfolio[i].ticker.toUpperCase() === userTicker.toUpperCase()) {
+                    shareCount += parseInt(portfolio[i].quantity);
+                }
+            };
+
+            $("#current").append(`You currently own ${shareCount} shares of ${userTicker}`)
+            $("#current").append(`<p class ='h2' id='stock-name'>${data['bestMatches'][0]['2. name']}</p>`)
+        }).then(() => {
+
+            $.get(apiURL, data => {
+                console.log(data)
+                let price = data["Global Quote"]["05. price"];
+                $("#stock-name").append(`<p id='api-price'class='h2 my-3 text-dark'>Current Price: ${numFormat(parseFloat(price))}</p>\n<p id='alpha-vantage' class='text-success'>Powered by Alpha Vantage</p>`)
+            });
+
+
+        })
+
+
+
+    })
+
+    $(document).on("keyup", "#price", (event) => {
+        userPrice = parseFloat(event.target.value);
+        console.log(userPrice)
+    })
+
+    $(document).on("keyup", "#quantity", (event) => {
+
+        let quantity = parseInt(event.target.value);
+        if (userPrice) {
+            console.log(userPrice * quantity);
+            $("#total").empty();
+            $("#total").append(`<p class=' h3 text-success'>Transaction Total: ${numFormat(quantity * userPrice)}</p>`)
+        }
+
+    })
+
+
+    const numFormat = num => {
+        // let rounded = Math.round(num);
+        return '$' + num.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+    }
+
+
+    const symbolCheck = (portfolio, request) => {
+        for (let i = 0; i < portfolio.length; i++) {
+            if (portfolio[i].ticker.toLowerCase() === request.ticker.toLowerCase()) {
+                if (parseInt(portfolio[i].quantity) >= parseInt(request.quantity)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+
+</script>
 </html>

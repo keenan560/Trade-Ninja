@@ -116,7 +116,7 @@ app.get("/cash", redirectLogin, (req, res) => {
     const { user } = res.locals;
     connection.query(`SELECT * FROM CASH WHERE user_name = '${user.user_name}'`, (err, results) => {
         if (err) throw err;
-        // console.log(results.length);
+        
         if (results.length === 0) {
             res.render('cash', { title: 'Cash', userName: user.user_name, balance: '$0.00' });
         }
@@ -150,7 +150,24 @@ app.get("/history", redirectLogin, (req, res) => {
 
 app.get("/trade", redirectLogin, (req, res) => {
     const { user } = res.locals;
-    res.render('trade', { title: 'Trade', userName: user.user_name });
+    connection.query(`SELECT * FROM CASH WHERE user_name = '${user.user_name}'`, (err, results) => {
+        if (err) throw err;
+        console.log(results)
+
+        if (results.length === 0) {
+            res.render('trade', { title: 'Trade', balance: '$0.00' });
+        }
+
+
+        if (results.length > 0) {
+            let currBal = 0;
+            results.forEach(trans => currBal += trans.amount);
+            console.log(currBal)
+            res.render('trade', { title: 'Trade', balance: numFormat(currBal) });
+        }
+
+    })
+
 })
 
 app.post("/users/email", (req, res) => {
@@ -256,7 +273,7 @@ app.post('/cash', (req, res) => {
                 results.forEach(trans => {
                     bal += trans.amount;
                 })
-                res.render('cash', {title: 'Cash', userName: user.user_name, balance: numFormat(bal)});
+                res.render('cash', { title: 'Cash', userName: user.user_name, balance: numFormat(bal) });
 
             }
 
