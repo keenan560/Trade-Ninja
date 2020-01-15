@@ -1,15 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>{{title}}</title>
 </head>
+
 <body>
 
     <div class="container mx-auto">
-        
+
         <div class="container my-5" id='welcome'>
             <h1 class="text-center"> Place an order</h1>
             <div class='text-right h4 text-success' id='balance'>Cash Available: {{balance}}</div>
@@ -39,7 +41,8 @@
 
                 </div>
                 <div class="containter text-center">
-                    <button style='width:100%'id="order" type="submit" class="btn btn-primary btn-lg text-center">Ninja Trade!</button>
+                    <button style='width:100%' id="order" type="submit" class="btn btn-primary btn-lg text-center">Ninja
+                        Trade!</button>
                 </div>
 
             </form>
@@ -71,37 +74,35 @@
 </body>
 
 <script type='text/javascript'>
-    let ticketData = JSON.parse(localStorage.getItem('tickets')) || [];
-    let portfolio = JSON.parse(localStorage.getItem('portfolio')) || [];
-    let updated = [];
-    let accountBal = parseInt(JSON.parse(localStorage.getItem('balance'))) || 0;
 
-    let today = new Date();
-    let date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
-    let time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
-    let timeStamp = date + ' ' + time;
-
-
+    
+    let accountBal = 0;
     const apikey = "R44O6BSRP4WH9B1Y"
     const apiURL = `https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=MSFT&interval=5min&apikey=${apikey}`;
 
     let userPrice = parseFloat($("#price").val());
+    let stockName = '';
 
-
-    $(document).ready(() => {
-        {{!-- $("#balance").html(`<p class='text-right h4 text-success'>Cash Avaibale: ${numFormat(accountBal)}</p>`)
-        console.log(portfolio); --}}
-    })
 
     $(document).on("click", "#order", (event) => {
         event.preventDefault();
 
 
-        let ticker = $("#ticker").val() 
+        let ticker = $("#ticker").val()
+        let desc = $("#stock-name").val();
         let orderType = $("#order-type").val();
         let price = $("#price").val()
         let quantity = $("#quantity").val()
         let total = parseFloat(price) * parseInt(quantity);
+
+        console.log(desc)
+
+        $.get("http://localhost:3000/cash/users", (data, status) => {
+
+            data.forEach(trans => accountBal += trans.amount);
+
+        });
+
 
         if (orderType === "Buy" && accountBal < total) {
 
@@ -119,46 +120,38 @@
 
             let order = {
                 ticker: ticker,
+                desc: stockName,
                 transType: orderType,
                 price: price,
                 quantity: quantity,
-                timeStamp: timeStamp
+                total: total
+            }
+
+            let cash = {
+                transType: orderType,
+                amount: total * -1
             }
 
 
-            if (portfolio.length === 0) {
-                ticketData.push(order);
-                localStorage.setItem('tickets', JSON.stringify(ticketData));
+            $.ajax({
+                type: "POST",
+                contentType: "application/json",
+                url: "http://localhost:3000/trades",
+                data: JSON.stringify(order)
+            }).then(results => {
+                console.log(results);
+            })
 
-                accountBal -= total;
-                localStorage.setItem('balance', JSON.stringify(accountBal));
-
-                portfolio.push(order);
-                localStorage.setItem('portfolio', JSON.stringify(portfolio))
-            } else {
-
-
-
-                ticketData.push(order);
-                localStorage.setItem('tickets', JSON.stringify(ticketData));
+            $.ajax({
+                type: "POST",
+                contentType: "application/json",
+                url: "http://localhost:3000/trades/cash",
+                data: JSON.stringify(cash)
+            }).then(results => {
+                console.log(results);
+            })
 
 
-                accountBal -= total;
-                localStorage.setItem('balance', JSON.stringify(accountBal));
-
-                // update existing stock
-                for (let i = 0; i < portfolio.length; i++) {
-                    if (order.ticker.toLowerCase() === portfolio[i].ticker.toLowerCase()) {
-                        let newStock = parseInt(portfolio[i].quantity) + parseInt(order.quantity);
-                        portfolio[i][quantity] = newStock;
-                    }
-
-                }
-
-                portfolio.push(order);
-                localStorage.setItem('portfolio', JSON.stringify(portfolio));
-
-            }
 
 
             $("#trade-form")[0].reset();
@@ -167,7 +160,7 @@
 
             setTimeout(() => {
                 $("#alert-space").fadeOut(3);
-                window.location.replace("./history.html");
+                window.location.replace("/dashboard");
             }, 3000)
 
 
@@ -178,39 +171,17 @@
 
             let order = {
                 ticker: ticker,
+                desc: stockName,
                 transType: orderType,
                 price: price,
                 quantity: quantity,
-                timeStamp: timeStamp
+                total: total
             }
 
 
-            if (symbolCheck(portfolio, order)) {
-                accountBal += total;
-                localStorage.setItem('balance', JSON.stringify(accountBal));
-                ticketData.push(order)
-                localStorage.setItem('tickets', JSON.stringify(ticketData));
-
-
-                // reducing the quantity by amount sold
-                for (let i = 0; i < portfolio.length; i++) {
-                    if (portfolio[i].ticker.toLowerCase() === order.ticker.toLowerCase()) {
-                        portfolio[i].quantity -= order.quantity;
-                    }
-                }
-
-
-                let results = [];
-                // filerting portfolio for 0 holdings
-                for (let i = 0; i < portfolio.length; i++) {
-                    console.log(portfolio[i])
-                    if (portfolio[i].quantity !== 0) {
-
-                        results.push(portfolio[i]);
-                    }
-                }
-
-                localStorage.setItem('portfolio', JSON.stringify(results));
+        
+        
+        
 
                 $("#trade-form")[0].reset();
 
@@ -222,14 +193,14 @@
                 }, 3000)
 
 
-            } else {
+             {{!-- else {
                 $("#alert-space").append(`<div class="alert alert-warning" role="alert">Order not successful! Please check holdings</div>`);
 
                 setTimeout(() => {
                     $("#alert-space").empty();
                     // window.location.replace("./portfolio.html");
                 }, 3000)
-            }
+            } --}}
 
 
 
@@ -251,20 +222,21 @@
             $("#current").empty();
             let shareCount = 0;
 
-            for (let i = 0; i < portfolio.length; i++) {
+            {{!-- for (let i = 0; i < portfolio.length; i++) {
                 if (portfolio[i].ticker.toUpperCase() === userTicker.toUpperCase()) {
                     shareCount += parseInt(portfolio[i].quantity);
                 }
-            };
+            }; --}}
+            stockName= data['bestMatches'][0]['2. name'];
 
             $("#current").append(`You currently own ${shareCount} shares of ${userTicker}`)
-            $("#current").append(`<p class ='h2' id='stock-name'>${data['bestMatches'][0]['2. name']}</p>`)
+            $("#current").append(`<p class ='h3' id='stock-name'>${data['bestMatches'][0]['2. name']}</p>`)
         }).then(() => {
 
             $.get(apiURL, data => {
                 console.log(data)
-                let price = data["Global Quote"]["05. price"];
-                $("#stock-name").append(`<p id='api-price'class='h2 my-3 text-dark'>Current Price: ${numFormat(parseFloat(price))}</p>\n<p id='alpha-vantage' class='text-success'>Powered by Alpha Vantage</p>`)
+                let price = data["Global Quote"]["05. price"]; 
+                $("#stock-name").append(`<p id='api-price'class='h3 my-3 text-dark'>Current Price: ${numFormat(parseFloat(price))}</p>\n<p style='font-size:11px' id='alpha-vantage' class='text-success'>Powered by Alpha Vantage</p>`)
             });
 
 
@@ -310,4 +282,5 @@
 
 
 </script>
+
 </html>

@@ -282,7 +282,44 @@ app.post('/cash', (req, res) => {
     })
 });
 
+app.post('/trades', redirectLogin, (req, res) => {
+    const {user} = res.locals;
+    console.log(req.body);
+    let stmt = 'INSERT INTO trades (user_name, trans_type, ticker, description, price, quantity, total) VALUES (?)';
+    let values = [user.user_name, req.body.transType, req.body.ticker, req.body.desc, req.body.price, req.body.quantity, req.body.total];
 
+        connection.query(stmt, [values], (err, results) => {
+            if (err) throw err;
+            console.log(results);
+            res.sendStatus(200);
+        });
+});
+
+app.post('/trades/cash', (req, res) => {
+    const { user } = res.locals;
+    console.log(req.body)
+    let stmt = `INSERT INTO cash (user_name, trans_type, amount) VALUES (?)`;
+    let values = [user.user_name, req.body.transType, req.body.amount];
+
+    connection.query(stmt, [values], (err, results) => {
+        if (err) throw err;
+        console.log(results);
+        connection.query(`SELECT * FROM cash WHERE user_name = '${user.user_name}'`, (err, results) => {
+            if (err) throw err;
+
+            if (results.length > 0) {
+                let bal = 0;
+                results.forEach(trans => {
+                    bal += trans.amount;
+                })
+                res.render('cash', { title: 'Cash', userName: user.user_name, balance: numFormat(bal) });
+
+            }
+
+        })
+
+    })
+});
 
 app.post('/logout', redirectLogin, (req, res) => {
     req.session.destroy(err => {
