@@ -15,27 +15,28 @@
 
     <div class="container mx-auto">
 
-    </div>
+
+        <h1 class='my-5 text-center' id='welcome'> Welcome Ninja {{firstName}}</h1>
+
+        <p class="text-center my-5">Let's get ready to begin your journey as a Ninja Trader! Choose your path:</p>
 
 
-    <div class="container">
+        <div class=" text-center my-3">
+            <a href="https://www.cnbc.com"><button style='width: 150px; height:100px' class="btn mx-2 my-1 btn-info text-center dash-button">News</button></a>
+            <a href="/portfolio"><button style='width: 150px; height:100px' class="btn mx-2 my-1 btn-primary text-center dash-button">Portfolio</button></a>
+            <a href="/history"><button style='width: 150px; height:100px' class="btn mx-2 my-1 btn-secondary text-center dash-button">History</button></a>
+            <a href="/cash"><button style='width: 150px; height:100px' class="btn mx-2 my-1 btn-warning text-center dash-button">Cash</button></a>
+            <a href="/trade"><button style='width: 150px; height:100px' class="btn mx-2 my-1 btn-dark text-center dash-button">Ninja Trade</button></a>
+            <a href="/leaders"><button style='width: 150px; height:100px' class="btn mx-2 my-1 btn-danger text-center dash-button">Leadersboard</button></a>
+        </div>
 
+        <div class="row text-center">
+            <button id='logout' style='width: 150px; height:100px' class="btn mx-2 my-5 btn-transparent mx-auto">Ninja
+                Out</button>
+        </div>
+           
 
-        <h1 class='my-5' id='welcome'> Welcome Ninja {{firstName}}</h1>
-
-        <p>Let's get ready to begin your journey as a Ninja Trader! Choose your path:</p>
-        <ul class="list-group">
-            <li class="list-group-item"><a href="https://www.cnbc.com"><button style='width: 100%' class="btn btn-lg btn-dark text-white"><img class='mx-1 ' width="30" length='30' src='./layouts/css/images/news.png'>News</button></a></li>
-            <li class="list-group-item"><a href="/portfolio"><button style='width: 100%' class="btn btn-lg btn-dark text-white"><img class='mx-1 ' width="30" length='30' src='./layouts/css/images/portfolio.png'>Portfolio</button></a></li>
-            <li class="list-group-item"><a href="/history"><button style='width: 100%' class="btn btn-lg btn-dark"><img class='mx-1' width="30" length='30' src='./layouts/css/images/history.png'>
-                History</button></a></li>
-            <li class="list-group-item"><a href="/cash"><button style='width: 100%' class="btn btn-lg btn-dark"><img class='mx-1' width="30" length='30' src='./layouts/css/images/cash.png'>Cash</button></a></li>
-            <li class="list-group-item"><a href="/trade"><button style='width: 100%' class="btn btn-lg btn-dark"><img class='mx-1' width="30" length='30' src='./layouts/css/images/trade.png'>Ninja
-                Trade</button></a></li>
-            <li id='logout' class="list-group-item"><button style='width: 100%' class="btn btn-lg btn-danger">Ninja Out</button></li>
-        </ul>
-
-        <div class='my-3' id="alert-space">
+        <div class='my-5 text-center' id="alert-space">
 
         </div>
     </div>
@@ -62,7 +63,7 @@
                 console.log(results);
 
                 if (results === "Ninja vanish!") {
-                    $("#alert-space").append(`<div class="alert alert-warning my-3" role="alert">${results}</div>`);
+                    $("#alert-space").append(`<div class="spinner-border text-danger" role="status"></div>`);
                     setTimeout(() => {
                         window.location = 'login'
                     }, 3000);

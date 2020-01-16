@@ -11,12 +11,12 @@
 <body>
 
     <div class="container mx-auto">
+        <a href="/dashboard"><button style='width: 150px; height:20%' class="btn mx-2 my-1 btn-transparent text-center dash-button">Dashboard</button></a>
 
-
-        <div class="container my-5" id='welcome'>
+        <div class="container my-3" id='welcome'>
             <h1 class="my-3 text-center">Ninja Add or Ninja Subtract</h1>
             <div id='balance'>
-                <p id='current-bal' class="float-right h4 text-success">{{balance}}</p>
+                <p id='current-bal' class="float-right h6 text-warning">Cash Available: {{balance}}</p>
             </div>
             <form id='funds-form' class='my-3'>
 
@@ -45,7 +45,7 @@
                     </select>
                 </div>
                 <div class="containter text-center">
-                    <button style="width:100%" id="ninja-cash" type="submit" class="btn btn-primary btn-lg text-center">Ninja
+                    <button style="width:100%" id="ninja-cash" type="submit" class="btn btn-primary btn-lg text-center my-4">Ninja
                         Cash!</button>
                 </div>
 

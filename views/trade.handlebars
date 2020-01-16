@@ -11,10 +11,11 @@
 <body>
 
     <div class="container mx-auto">
+        <a href="/dashboard"><button style='width: 150px; height:20%' class="btn mx-2 my-1 btn-transparent text-center dash-button">Dashboard</button></a>
 
-        <div class="container my-5" id='welcome'>
+        <div class="container my-5 " id='welcome'>
             <h1 class="text-center"> Place an order</h1>
-            <div class='text-right h4 text-success' id='balance'>Cash Available: {{balance}}</div>
+            <div class='text-right h6 text-success' id='balance'>Cash Available: {{balance}}</div>
             <form id='trade-form' class='my-3'>
                 <div class="form-group">
                     <label for="formGroupExampleInput">Ticker</label>
@@ -41,7 +42,7 @@
 
                 </div>
                 <div class="containter text-center">
-                    <button style='width:100%' id="order" type="submit" class="btn btn-primary btn-lg text-center">Ninja
+                    <button style='width:100%' id="order" type="submit" class="btn btn-primary btn-lg text-center my-4">Ninja
                         Trade!</button>
                 </div>
 
@@ -95,7 +96,6 @@
         let quantity = $("#quantity").val()
         let total = parseFloat(price) * parseInt(quantity);
 
-        console.log(desc)
 
         $.get("http://localhost:3000/cash/users", (data, status) => {
 
@@ -229,14 +229,14 @@
             }; --}}
             stockName= data['bestMatches'][0]['2. name'];
 
-            $("#current").append(`You currently own ${shareCount} shares of ${userTicker}`)
-            $("#current").append(`<p class ='h3' id='stock-name'>${data['bestMatches'][0]['2. name']}</p>`)
+            $("#current").append(`<p class ='my-2 text-primary'>You currently own ${shareCount} shares of ${userTicker}</p>`)
+            $("#current").append(`<p class ='h4 my-2' id='stock-name'>${data['bestMatches'][0]['2. name']}</p>`)
         }).then(() => {
 
             $.get(apiURL, data => {
                 console.log(data)
                 let price = data["Global Quote"]["05. price"]; 
-                $("#stock-name").append(`<p id='api-price'class='h3 my-3 text-dark'>Current Price: ${numFormat(parseFloat(price))}</p>\n<p style='font-size:11px' id='alpha-vantage' class='text-success'>Powered by Alpha Vantage</p>`)
+                $("#stock-name").append(`<p id='api-price'class='h4 my-2 text-white'>Current Price: ${numFormat(parseFloat(price))}</p>\n<p style='font-size:11px' id='alpha-vantage' class='text-warning'>Powered by Alpha Vantage</p>`)
             });
 
 
@@ -257,7 +257,7 @@
         if (userPrice) {
             console.log(userPrice * quantity);
             $("#total").empty();
-            $("#total").append(`<p class=' h3 text-success'>Transaction Total: ${numFormat(quantity * userPrice)}</p>`)
+            $("#total").append(`<p class=' my-2 h3 text-success'>Transaction Total: ${numFormat(quantity * userPrice)}</p>`)
         }
 
     })
