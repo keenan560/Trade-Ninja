@@ -14,8 +14,8 @@
 
    
         <h1 class="text-center my-3">Holdings</h1>
-
-        <table class="table">
+        <p id="">Portfolio Value: {{portVal}}</p>
+        <table class="table my-2">
             <thead class="thead-primary">
                 <tr>
                     <th scope="col" class="p-2 text-center">Ticker</th>
@@ -50,6 +50,11 @@
 
 
     <script type="text/javascript">
+
+      const numFormat = num => {
+
+            return '$' + num.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+        }
 
         $(document).ready(() => {
           $.ajax({

@@ -112,7 +112,11 @@ app.get("/portfolio", redirectLogin, (req, res) => {
     connection.query(`SELECT * FROM trades WHERE user_name = '${user.user_name}'`, (err, results) => {
         if (err) throw err;
         console.log(results);
-        res.render('portfolio', { title: "Holdings", userName: user.user_name, holdings: results });
+        let portVal = 0
+
+        results.forEach(order => portVal+= order.total);
+
+        res.render('portfolio', { title: "Holdings", userName: user.user_name, holdings: results, portVal: numFormat(portVal) });
     })
    
 })
