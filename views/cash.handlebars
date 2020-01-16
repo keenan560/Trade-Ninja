@@ -104,7 +104,7 @@
 
 
                     $("#funds-form")[0].reset();
-                    $("#alert-space").append(`<div class="alert alert-success" role="alert">Your funds were added successfully!</div>`);
+                    $("#alert-space").append(`<div class="alert alert-transparent text-success" role="alert">Your funds were added successfully!</div>`);
 
                     setTimeout(() => {
                         $("#alert-space").fadeOut(3);
@@ -143,7 +143,7 @@
                             data: JSON.stringify(data)
                         }).then(results => {
                             $("#funds-form")[0].reset();
-                            $("#alert-space").append(`<div class="alert alert-success" role="alert">You cashed out; please wait time 2-3 business days!</div>`);
+                            $("#alert-space").append(`<div class="alert alert-transparent text-success" role="alert">You cashed out; please wait time 2-3 business days!</div>`);
                             setTimeout(() => {
                                 $("#alert-space").fadeOut(3);
                                 window.location.replace("./dashboard");
@@ -152,7 +152,7 @@
                         })
                     } else {
 
-                        $("#alert-space").append(`<div class="alert alert-danger" role="alert">Request denied! Not enough funds.</div>`);
+                        $("#alert-space").append(`<div class="alert alert-transparent text-danger" role="alert">Request denied! Not enough funds.</div>`);
 
                         setTimeout(() => {
                             $("#alert-space").empty();

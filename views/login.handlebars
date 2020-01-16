@@ -90,14 +90,14 @@
                 console.log(results)
 
                 if (results === "Username does not exist") {
-                    $("#alert-space").html(`<div class="alert alert-warning" role="alert">${results}</div>`);
+                    $("#alert-space").html(`<div class="alert alert-transparent text-warning" role="alert">Please enter a valid username.</div>`);
                     setTimeout(() => {
                         $("#alert-space").empty();
                     }, 3000);
                 }
 
                 if (results === "Invalid credentials!") {
-                    $("#alert-space").html(`<div class="alert alert-danger" role="alert">${results}</div>`);
+                    $("#alert-space").html(`<div class="alert alert-transparent text-danger" role="alert">${results}</div>`);
                     setTimeout(() => {
                         $("#alert-space").empty();
                     }, 3000);

@@ -106,7 +106,7 @@
 
         if (orderType === "Buy" && accountBal < total) {
 
-            $("#alert-space").append(`<div class="alert alert-danger" role="alert">You do not have enough funds!</div>`);
+            $("#alert-space").append(`<div class="alert alert-transparent text-danger" role="alert">You do not have enough funds!</div>`);
 
             setTimeout(() => {
                 $("#alert-space").empty()
@@ -156,7 +156,7 @@
 
             $("#trade-form")[0].reset();
 
-            $("#alert-space").append(`<div class="alert alert-success" role="alert">Your order was place successfully!</div>`);
+            $("#alert-space").append(`<div class="alert alert-transparent text-success" role="alert">Your order was place successfully!</div>`);
 
             setTimeout(() => {
                 $("#alert-space").fadeOut(3);
@@ -185,11 +185,11 @@
 
                 $("#trade-form")[0].reset();
 
-                $("#alert-space").append(`<div class="alert alert-success" role="alert">Your order was place successfully!</div>`);
+                $("#alert-space").append(`<div class="alert alert-transparent" role="alert">Your order was place successfully!</div>`);
 
                 setTimeout(() => {
                     $("#alert-space").fadeOut(3);
-                    window.location.replace("./history.html");
+                    window.location.replace("./history");
                 }, 3000)
 
 

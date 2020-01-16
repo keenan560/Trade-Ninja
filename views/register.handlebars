@@ -52,7 +52,7 @@
             <div class="form-group">
                 <label for='email'>Email Address</label>
                 <input type="email" class="form-control" id="email" name="email">
-                <div class='' id="email-alert"></div>
+                <div id="email-alert"></div>
             </div>
             <div class="form-group">
                 <label for='username'>Username</label>
@@ -99,9 +99,9 @@
 
         $("#password2").on("keyup", event => {
             if ($("#password1").val() !== $("#password2").val() || $("#password1").val().length === 0) {
-                $("#password-alert").html(`<div class="alert alert-warning" role="alert">Passwords do not match</div>`);
+                $("#password-alert").html(`<div class="alert alert-transparent text-warning" role="alert">Passwords do not match</div>`);
             } else {
-                $("#password-alert").html(`<div class="alert alert-success" role="alert">Passwords match!</div>`)
+                $("#password-alert").html(`<div class="alert alert-transparent text-success" role="alert">Passwords match!</div>`)
             }
 
         });
@@ -110,10 +110,10 @@
             let email = event.target.value;
 
             if (!validEmail(email)) {
-                $("#email-alert").html(`<div class="alert alert-danger" role="alert">Not a valid email address</div>`);
+                $("#email-alert").html(`<div class="alert alert-transparent text-danger" role="alert">Not a valid email address</div>`);
                 setTimeout(() => {
                     $("#email-alert").empty();
-                })
+                },3000)
             } else {
                 let data = {
                     email: email
@@ -127,12 +127,12 @@
                 }).then((results) => {
 
                     if (results === "Cannot use this email.") {
-                        $("#email-alert").html(`<div class="alert alert-danger" role="alert">${results}</div>`);
+                        $("#email-alert").html(`<div class="alert alert-transparent text-danger" role="alert">${results}</div>`);
                         setTimeout(() => {
                             $("#email-alert").empty()
                         }, 3000)
                     } else if (results === "Okay to use.") {
-                        $("#email-alert").html(`<div class="alert alert-success" role="alert">${results}</div>`);
+                        $("#email-alert").html(`<div class="alert alert-transparent text-success" role="alert">${results}</div>`);
                         setTimeout(() => {
                             $("#email-alert").empty()
                         }, 3000)
@@ -150,7 +150,7 @@
             console.log(userName);
 
             if (userNameNum(userName) === false || userNameLetter(userName) === false || userName.length === 0) {
-                $("#username-alert").html(`<div class="alert alert-danger" role="alert">Username must contain at least one number and at least letter</div>`);
+                $("#username-alert").html(`<div class="alert alert-transparent text-warning" role="alert">Username must contain at least one number and at least letter</div>`);
             } else {
                 let data = {
                     username: userName
@@ -164,9 +164,9 @@
                 }).then((results) => {
 
                     if (results === "Username exists!") {
-                        $("#username-alert").html(`<div class="alert alert-danger" role="alert">${results}</div>`);
+                        $("#username-alert").html(`<div class="alert alert-transparent text-danger" role="alert">${results}</div>`);
                     } else {
-                        $("#username-alert").html(`<div class="alert alert-success" role="alert">${results}</div>`);
+                        $("#username-alert").html(`<div class="alert alert-transparent text-success" role="alert">${results}</div>`);
                     }
 
                 })

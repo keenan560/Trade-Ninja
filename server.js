@@ -109,7 +109,12 @@ app.get("/about", (req, res) => {
 
 app.get("/portfolio", redirectLogin, (req, res) => {
     const { user } = res.locals;
-    res.render('portfolio', { title: "Holdings", userName: user.user_name });
+    connection.query(`SELECT * FROM trades WHERE user_name = '${user.user_name}'`, (err, results) => {
+        if (err) throw err;
+        console.log(results);
+        res.render('portfolio', { title: "Holdings", userName: user.user_name, holdings: results });
+    })
+   
 })
 
 app.get("/cash", redirectLogin, (req, res) => {
@@ -168,7 +173,17 @@ app.get("/trade", redirectLogin, (req, res) => {
 
     })
 
-})
+});
+
+app.get("/leaders", redirectLogin, (req, res) => {
+    const {user} = res.locals;
+    connection.query('SELECT * FROM users', (err, results) => {
+        if (err) throw err;
+        console.log(results);
+        res.render('leaders', { title: "Leaderboard", userName: user.user_name, results: results})
+    })
+
+});
 
 app.post("/users/email", (req, res) => {
     let email = req.body.email;
