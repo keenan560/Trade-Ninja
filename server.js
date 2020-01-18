@@ -112,6 +112,7 @@ app.get("/portfolio", redirectLogin, (req, res) => {
     connection.query(`SELECT * FROM holdings WHERE user_name = '${user.user_name}'`, (err, results) => {
         if (err) throw err;
         let holdings = results;
+        let adjHoldings = holdings.filter(stock => stock.quantity > 0);
 
 
         connection.query(`SELECT * FROM trades WHERE user_name ='${user.user_name}'`, (err, results) => {
@@ -120,7 +121,7 @@ app.get("/portfolio", redirectLogin, (req, res) => {
 
             results.forEach(order => portVal += order.total);
 
-            res.render('portfolio', { title: "Holdings", userName: user.user_name, holdings: holdings, portVal: numFormat(portVal) });
+            res.render('portfolio', { title: "Holdings", userName: user.user_name, holdings: adjHoldings, portVal: numFormat(portVal) });
 
         })
 
@@ -161,7 +162,7 @@ app.get("/cash/users", redirectLogin, (req, res) => {
 
 app.get("/history", redirectLogin, (req, res) => {
     const { user } = res.locals;
-    connection.query(`SELECT * FROM trades WHERE user_name = '${user.user_name}'`, (err, results) => {
+    connection.query(`SELECT * FROM trades WHERE user_name = '${user.user_name}' ORDER BY trade_date DESC`, (err, results) => {
         if (err) throw err;
         console.log(results);
         let portVal = 0
@@ -381,9 +382,47 @@ app.post('/holdings', redirectLogin, (req, res) => {
 
 })
 
-app.delete('/sell', redirectLogin, (req, res) => {
+app.post('/sell', redirectLogin, (req, res) => {
     const { user } = res.locals;
-    let stmt = `DELETE FROM trades WHERE user_name ='${user.user_name}`
+    connection.query(`SELECT * FROM holdings WHERE user_name = '${user.user_name}'`, (err, results) => {
+        if (err) throw err;
+
+        if (results.length === 0) {
+            res.send('Not found please check your holdings!');
+        } else {
+            let stmt = `UPDATE holdings SET quantity = quantity - ${req.body.quantity} WHERE user_name = '${user.user_name}' AND ticker ='${req.body.ticker}'`;
+            connection.query(stmt, (err, results) => {
+                if (err) throw err;
+                console.log(results);
+            });
+        }
+    });
+});
+
+app.post('/sell/cash', (req, res) => {
+    const { user } = res.locals;
+    console.log(req.body)
+    let stmt = `INSERT INTO cash (user_name, trans_type, amount) VALUES (?)`;
+    let values = [user.user_name, req.body.transType, req.body.amount];
+
+    connection.query(stmt, [values], (err, results) => {
+        if (err) throw err;
+        console.log(results);
+        connection.query(`SELECT * FROM cash WHERE user_name = '${user.user_name}'`, (err, results) => {
+            if (err) throw err;
+
+            if (results.length > 0) {
+                let bal = 0;
+                results.forEach(trans => {
+                    bal += trans.amount;
+                })
+                res.render('cash', { title: 'Cash', userName: user.user_name, balance: numFormat(bal) });
+
+            }
+
+        })
+
+    })
 });
 
 app.post('/logout', redirectLogin, (req, res) => {

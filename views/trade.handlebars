@@ -76,7 +76,7 @@
 
 <script type='text/javascript'>
 
-    
+
     let accountBal = 0;
     const apikey = "R44O6BSRP4WH9B1Y"
     const apiURL = `https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=MSFT&interval=5min&apikey=${apikey}`;
@@ -85,7 +85,7 @@
     let stockName = '';
 
     $(document).ready(() => {
-         $.get("http://localhost:3000/cash/users", (data, status) => {
+        $.get("http://localhost:3000/cash/users", (data, status) => {
 
             data.forEach(trans => accountBal += trans.amount);
             console.log(accountBal);
@@ -93,7 +93,7 @@
 
     })
 
-    
+
 
     $(document).on("click", "#order", (event) => {
         event.preventDefault();
@@ -106,7 +106,7 @@
         let total = parseFloat(price) * parseInt(quantity);
 
         console.log(accountBal)
-       
+
 
 
         if (orderType === "Buy" && accountBal < total) {
@@ -156,7 +156,7 @@
                 data: JSON.stringify(order)
             }).then(results => {
                 console.log(results);
-                
+
             })
 
             $.ajax({
@@ -165,7 +165,7 @@
                 url: "http://localhost:3000/trades/cash",
                 data: JSON.stringify(cash)
             }).then(results => {
-                 $("#trade-form")[0].reset();
+                $("#trade-form")[0].reset();
 
                 $("#alert-space").append(`<div class="alert alert-transparent text-success" role="alert">Your holdings were updated sucessfully!</div>`);
 
@@ -176,7 +176,7 @@
 
             })
 
-           
+
 
         }
 
@@ -192,17 +192,37 @@
                 total: total
             }
 
+            let cash = {
+                transType: orderType,
+                amount: total
+            }
+
 
             $.ajax({
-                type: "DELETE",
+                type: "POST",
                 contentType: "application/json",
                 url: "http://localhost:3000/sell",
                 data: JSON.stringify(order)
             }).then(results => {
                 console.log(results);
-            })
-            
+            });
 
+            $.ajax({
+                type: "POST",
+                contentType: "application/json",
+                url: "http://localhost:3000/trades",
+                data: JSON.stringify(order)
+            }).then(results => {
+                console.log(results);
+            });
+
+            $.ajax({
+                type: "POST",
+                contentType: "application/json",
+                url: "http://localhost:3000/sell/cash",
+                data: JSON.stringify(cash)
+            }).then(results => {
+                console.log(results);
                 $("#trade-form")[0].reset();
 
                 $("#alert-space").append(`<div class="alert alert-transparent" role="alert">Your order was place successfully!</div>`);
@@ -211,19 +231,18 @@
                     $("#alert-space").fadeOut(3);
                     window.location.replace("./history");
                 }, 3000)
-
-
-             {{!-- else {
-                $("#alert-space").append(`<div class="alert alert-warning" role="alert">Order not successful! Please check holdings</div>`);
-
-                setTimeout(() => {
-                    $("#alert-space").empty();
-                    // window.location.replace("./portfolio.html");
-                }, 3000)
-            } --}}
+            })
 
 
 
+
+        } else {
+            $("#alert-space").append(`<div class="alert alert-warning" role="alert">Order not successful! Please check holdings</div>`);
+
+            setTimeout(() => {
+                $("#alert-space").empty();
+                // window.location.replace("./portfolio.html");
+            }, 3000);
         }
 
 
@@ -242,12 +261,8 @@
             $("#current").empty();
             let shareCount = 0;
 
-            {{!-- for (let i = 0; i < portfolio.length; i++) {
-                if (portfolio[i].ticker.toUpperCase() === userTicker.toUpperCase()) {
-                    shareCount += parseInt(portfolio[i].quantity);
-                }
-            }; --}}
-            stockName= data['bestMatches'][0]['2. name'];
+
+            stockName = data['bestMatches'][0]['2. name'];
 
             $("#current").append(`<p class ='my-2 text-primary'>You currently own ${shareCount} shares of ${userTicker}</p>`)
             $("#current").append(`<p class ='h4 my-2' id='stock-name'>${data['bestMatches'][0]['2. name']}</p>`)
@@ -255,7 +270,7 @@
 
             $.get(apiURL, data => {
                 console.log(data)
-                let price = data["Global Quote"]["05. price"]; 
+                let price = data["Global Quote"]["05. price"];
                 $("#stock-name").append(`<p id='api-price'class='h4 my-2 text-white'>Current Price: ${numFormat(parseFloat(price))}</p>\n<p style='font-size:11px' id='alpha-vantage' class='text-warning'>Powered by Alpha Vantage</p>`)
             });
 
