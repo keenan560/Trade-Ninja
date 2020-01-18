@@ -18,15 +18,14 @@
         <table class="table my-2">
             <thead class="thead-primary">
                 <tr>
-                    <th scope="col" class="p-2 text-center">Ticker</th>
-                    <th scope="col" class="p-2 text-center">Desc</th>
-                    <th scope="col" class="p-2 text-center">Price Acquired</th>
-                    <th scope="col" class="p-2 text-center">Market Price</th>
-                    <th scope="col" class="p-2 text-center">Delta</th>
-                    <th scope="col" class="p-2 text-center">Quantity</th> 
-                    <th scope="col" class="p-2 text-center">Total</th>
-                    <th scope="col" class="p-2 text-center">Date</th>
-                    <th scope="col" class="p-2 text-center">iD</th>
+                    <th scope="col" class=" ">Ticker</th>
+                    <th scope="col" class=" ">Description</th>
+                    <th scope="col" class=" ">Price Acquired</th>
+                    <th scope="col" class=" ">Market Price</th>
+                    <th scope="col" class=" ">Delta</th>
+                    <th scope="col" class=" ">Quantity</th> 
+                    <th scope="col" class=" ">Trade Date</th>
+                    <th scope="col" class=" ">iD</th>
                 </tr>
             </thead>
             <tbody>
@@ -34,12 +33,11 @@
                     <tr>
                         <td>{{this.ticker}}</td>
                         <td>{{this.description}}</td>
-                        <td>{{this.price}}</td>
+                        <td>{{this.price_acquired}}</td>
                         <td>Work in progress</td>
                         <td>Work in progress</td>
                         <td>{{this.quantity}}</td>
-                        <td>{{this.total}}</td>
-                        <td>{{this.trade_date}}</td>
+                        <td>{{this.date_acquired}}</td>
                         <td>{{this.id}}</td>
                     </tr>
                 {{/each}}
@@ -56,14 +54,14 @@
             return '$' + num.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
         }
 
-        $(document).ready(() => {
+        {{!-- $(document).ready(() => {
           $.ajax({
               type: "GET",
               contentType: "application/json",
-              url: "http://localhost:3000/:user_name/holdings";
+              url: "http://localhost:3000/:user_name/holdings",
               
           })  
-        })
+        }) --}}
     </script>   
 </body>
 

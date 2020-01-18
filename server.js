@@ -109,23 +109,30 @@ app.get("/about", (req, res) => {
 
 app.get("/portfolio", redirectLogin, (req, res) => {
     const { user } = res.locals;
-    connection.query(`SELECT * FROM trades WHERE user_name = '${user.user_name}'`, (err, results) => {
+    connection.query(`SELECT * FROM holdings WHERE user_name = '${user.user_name}'`, (err, results) => {
         if (err) throw err;
-        console.log(results);
-        let portVal = 0
+        let holdings = results;
 
-        results.forEach(order => portVal+= order.total);
 
-        res.render('portfolio', { title: "Holdings", userName: user.user_name, holdings: results, portVal: numFormat(portVal) });
+        connection.query(`SELECT * FROM trades WHERE user_name ='${user.user_name}'`, (err, results) => {
+            if (err) throw err;
+            let portVal = 0;
+
+            results.forEach(order => portVal += order.total);
+
+            res.render('portfolio', { title: "Holdings", userName: user.user_name, holdings: holdings, portVal: numFormat(portVal) });
+
+        })
+
     })
-   
+
 })
 
 app.get("/cash", redirectLogin, (req, res) => {
     const { user } = res.locals;
     connection.query(`SELECT * FROM CASH WHERE user_name = '${user.user_name}'`, (err, results) => {
         if (err) throw err;
-        
+
         if (results.length === 0) {
             res.render('cash', { title: 'Cash', userName: user.user_name, balance: '$0.00' });
         }
@@ -154,7 +161,16 @@ app.get("/cash/users", redirectLogin, (req, res) => {
 
 app.get("/history", redirectLogin, (req, res) => {
     const { user } = res.locals;
-    res.render('history', { title: 'History', userName: user.user_name });
+    connection.query(`SELECT * FROM trades WHERE user_name = '${user.user_name}'`, (err, results) => {
+        if (err) throw err;
+        console.log(results);
+        let portVal = 0
+
+        results.forEach(order => portVal += order.total);
+
+        res.render('history', { title: 'History', history: results, portVal: numFormat(portVal) });
+    })
+
 });
 
 app.get("/trade", redirectLogin, (req, res) => {
@@ -180,11 +196,11 @@ app.get("/trade", redirectLogin, (req, res) => {
 });
 
 app.get("/leaders", redirectLogin, (req, res) => {
-    const {user} = res.locals;
+    const { user } = res.locals;
     connection.query('SELECT * FROM users', (err, results) => {
         if (err) throw err;
         console.log(results);
-        res.render('leaders', { title: "Leaderboard", userName: user.user_name, results: results})
+        res.render('leaders', { title: "Leaderboard", userName: user.user_name, results: results })
     })
 
 });
@@ -302,16 +318,16 @@ app.post('/cash', (req, res) => {
 });
 
 app.post('/trades', redirectLogin, (req, res) => {
-    const {user} = res.locals;
+    const { user } = res.locals;
     console.log(req.body);
     let stmt = 'INSERT INTO trades (user_name, trans_type, ticker, description, price, quantity, total) VALUES (?)';
     let values = [user.user_name, req.body.transType, req.body.ticker, req.body.desc, req.body.price, req.body.quantity, req.body.total];
 
-        connection.query(stmt, [values], (err, results) => {
-            if (err) throw err;
-            console.log(results);
-            res.sendStatus(200);
-        });
+    connection.query(stmt, [values], (err, results) => {
+        if (err) throw err;
+        console.log(results);
+        res.sendStatus(200);
+    });
 });
 
 app.post('/trades/cash', (req, res) => {
@@ -338,6 +354,36 @@ app.post('/trades/cash', (req, res) => {
         })
 
     })
+});
+
+app.post('/holdings', redirectLogin, (req, res) => {
+    const { user } = res.locals;
+
+    connection.query(`SELECT * FROM holdings WHERE user_name ='${user.user_name}' AND ticker = '${req.body.ticker}'`, (err, results) => {
+        if (err) throw err;
+
+        if (results.length === 0) {
+            let stmt = `INSERT INTO holdings(user_name, ticker, description, price_acquired, quantity, total) VALUES(?)`;
+            let values = [user.user_name, req.body.ticker, req.body.desc, req.body.price, req.body.quantity, req.body.total];
+            connection.query(stmt, [values], (err, results) => {
+                if (err) throw err;
+                console.log(results);
+            });
+        } else {
+            let stmt = `UPDATE holdings SET quantity = quantity + ${req.body.quantity} WHERE user_name = '${user.user_name}' AND ticker ='${req.body.ticker}'`;
+            connection.query(stmt, (err, res) => {
+                if (err) throw err;
+                console.log(results);
+            });
+        }
+    });
+
+
+})
+
+app.delete('/sell', redirectLogin, (req, res) => {
+    const { user } = res.locals;
+    let stmt = `DELETE FROM trades WHERE user_name ='${user.user_name}`
 });
 
 app.post('/logout', redirectLogin, (req, res) => {

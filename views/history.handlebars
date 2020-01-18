@@ -1,12 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>{{title}}</title>
 </head>
+
 <body>
-    <h1>{{userName}}</h1>
+    <div class="container mx-auto">
+        <a href="/dashboard"><button style='width: 150px; height:20%' class="btn mx-2 my-1 btn-transparent text-center dash-button">Dashboard</button></a>
+
+
+        <h1 class="text-center my-3">History</h1>
+        <p id="">Portfolio Value: {{portVal}}</p>
+        <table class="table my-2">
+            <thead id="history-head" class="thead-primary">
+                <tr>
+                    <th scope="col" class=" ">Ticker</th>
+                    <th scope="col" class=" ">Description</th>
+                    <th scope="col" class=" ">Price Acquired</th>
+                    <th scope="col" class=" ">Quantity</th>
+                    <th scope="col" class=" ">Total</th>
+                    <th scope="col" class=" ">Trade Date</th>
+                    <th scope="col" class=" ">iD</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each history}}
+                <tr>
+                    <td>{{this.ticker}}</td>
+                    <td>{{this.description}}</td>
+                    <td>{{this.price}}</td>
+                    <td>{{this.quantity}}</td>
+                    <td>{{this.total}}</td>
+                    <td>{{this.trade_date}}</td>
+                    <td>{{this.id}}</td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    </div>
+
+
+
+    <script type="text/javascript">
+
+        const numFormat = num => {
+
+            return '$' + num.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+        }
+
+        $(document).ready(() => {
+            $.ajax({
+                type: "GET",
+                contentType: "application/json",
+                url: "http://localhost:3000/:user_name/holdings";
+
+            })
+        })
+    </script>
 </body>
+
+
+
 </html>
