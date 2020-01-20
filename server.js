@@ -438,6 +438,16 @@ app.post('/sell/cash', (req, res) => {
     })
 });
 
+
+app.post('/portval', redirectLogin, (req, res) => {
+    const {user} = res.locals;
+    connection.query(`SELECT * FROM holdings WHERE user_name = '${user.user_name}' AND quantity > 0`, (err, results) => {
+        if (err) throw err;
+        console.log(results);
+        res.send(results);  
+    })
+})
+
 app.post('/logout', redirectLogin, (req, res) => {
     req.session.destroy(err => {
         if (err) {
