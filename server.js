@@ -115,7 +115,8 @@ app.get("/portfolio", redirectLogin, (req, res) => {
         let adjHoldings = holdings.filter(stock => stock.quantity > 0);
 
 
-        connection.query(`SELECT * FROM trades WHERE user_name ='${user.user_name}'`, (err, results) => {
+        connection.query(`SELECT * FROM holdings rs
+            WHERE user_name ='${user.user_name}'`, (err, results) => {
             if (err) throw err;
             let portVal = 0;
 
@@ -178,7 +179,7 @@ app.get("/trade", redirectLogin, (req, res) => {
     const { user } = res.locals;
     connection.query(`SELECT * FROM CASH WHERE user_name = '${user.user_name}'`, (err, results) => {
         if (err) throw err;
-        console.log(results)
+        // console.log(results)
 
         if (results.length === 0) {
             res.render('trade', { title: 'Trade', balance: '$0.00' });
@@ -205,6 +206,22 @@ app.get("/leaders", redirectLogin, (req, res) => {
     })
 
 });
+
+app.post("/users/holdings", redirectLogin, (req, res) => {
+    const {user} = res.locals;
+    console.log(req.body.ticker)
+    connection.query(`SELECT quantity FROM holdings WHERE user_name = '${user.user_name}' and ticker ='${req.body.ticker}'`, (err, results) => {
+        if (err) throw err;
+        console.log(results.length);
+        console.log(results);
+
+        if (results.length === 0) {
+            res.send("Not found!");
+        } else {
+            res.send(results);
+        }
+    })
+})
 
 app.post("/users/email", (req, res) => {
     let email = req.body.email;

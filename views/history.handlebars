@@ -14,13 +14,14 @@
 
 
         <h1 class="text-center my-3">History</h1>
-        <p id="">Portfolio Value: {{portVal}}</p>
+        <p id="">Cash Flow: {{portVal}}</p>
         <table class="table my-2">
             <thead id="history-head" class="thead-primary">
                 <tr>
                     <th scope="col" class=" ">Ticker</th>
                     <th scope="col" class=" ">Description</th>
-                    <th scope="col" class=" ">Price Acquired</th>
+                    <th scope="col" class=" ">Type</th>
+                    <th scope="col" class=" ">Price</th>
                     <th scope="col" class=" ">Quantity</th>
                     <th scope="col" class=" ">Total</th>
                     <th scope="col" class=" ">Trade Date</th>
@@ -32,6 +33,7 @@
                 <tr>
                     <td>{{this.ticker}}</td>
                     <td>{{this.description}}</td>
+                    <td>{{this.trans_type}}</td>
                     <td>{{this.price}}</td>
                     <td>{{this.quantity}}</td>
                     <td>{{this.total}}</td>

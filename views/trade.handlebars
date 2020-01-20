@@ -83,6 +83,7 @@
 
     let userPrice = parseFloat($("#price").val());
     let stockName = '';
+    let isInPort ;
 
     $(document).ready(() => {
         $.get("http://localhost:3000/cash/users", (data, status) => {
@@ -133,6 +134,15 @@
                 total: total
             }
 
+            let tradeOrder = {
+                ticker: ticker.toUpperCase(),
+                desc: stockName,
+                transType: orderType,
+                price: price,
+                quantity: quantity,
+                total: total * -1
+            }
+
             let cash = {
                 transType: orderType,
                 amount: total * -1
@@ -143,7 +153,7 @@
                 type: "POST",
                 contentType: "application/json",
                 url: "http://localhost:3000/trades",
-                data: JSON.stringify(order)
+                data: JSON.stringify(tradeOrder)
             }).then(results => {
                 console.log(results);
             });
@@ -176,12 +186,10 @@
 
             })
 
-
-
         }
 
 
-        if (orderType === "Sell") {
+        if (orderType === "Sell" & isInPort ) {
 
             let order = {
                 ticker: ticker.toUpperCase(),
@@ -205,46 +213,53 @@
                 data: JSON.stringify(order)
             }).then(results => {
                 console.log(results);
+                {
+                    {
+                        if (results === 'Not found please check your holdings!') {
+                            $("#alert-space").append(`<div class="alert alert-transparent text-warning"role="alert">Order not successful! Please check holdings</div>`);
+
+                            setTimeout(() => {
+                                $("#alert-space").empty();
+                                window.location = "/portfolio"
+                            }, 3000);
+                        } else {
+                            $.ajax({
+                                type: "POST",
+                                contentType: "application/json",
+                                url: "http://localhost:3000/trades",
+                                data: JSON.stringify(order)
+                            }).then(results => {
+                                console.log(results);
+                            });
+
+                            $.ajax({
+                                type: "POST",
+                                contentType: "application/json",
+                                url: "http://localhost:3000/sell/cash",
+                                data: JSON.stringify(cash)
+                            }).then(results => {
+                                console.log(results);
+                                $("#trade-form")[0].reset();
+
+                                $("#alert-space").append(`<div class="alert alert-transparent text-success" role="alert">Your order was place successfully!</div>`);
+
+                                setTimeout(() => {
+                                    $("#alert-space").fadeOut(3);
+                                    window.location.replace("./history");
+                                }, 3000)
+                            })
+                        }
+                    }
+                }
             });
 
-            $.ajax({
-                type: "POST",
-                contentType: "application/json",
-                url: "http://localhost:3000/trades",
-                data: JSON.stringify(order)
-            }).then(results => {
-                console.log(results);
-            });
-
-            $.ajax({
-                type: "POST",
-                contentType: "application/json",
-                url: "http://localhost:3000/sell/cash",
-                data: JSON.stringify(cash)
-            }).then(results => {
-                console.log(results);
-                $("#trade-form")[0].reset();
-
-                $("#alert-space").append(`<div class="alert alert-transparent" role="alert">Your order was place successfully!</div>`);
-
-                setTimeout(() => {
-                    $("#alert-space").fadeOut(3);
-                    window.location.replace("./history");
-                }, 3000)
-            })
 
 
 
 
-        } else {
-            $("#alert-space").append(`<div class="alert alert-warning" role="alert">Order not successful! Please check holdings</div>`);
 
-            setTimeout(() => {
-                $("#alert-space").empty();
-                // window.location.replace("./portfolio.html");
-            }, 3000);
+
         }
-
 
 
 
@@ -252,24 +267,45 @@
 
     $("#ticker").change((event) => {
         let userTicker = event.target.value;
+        let tickReq = {
+            ticker: userTicker
+        }
         const apiURL = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${userTicker}&apikey=${apikey}`;
-
         let keyURL = `https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=${userTicker}&apikey=${apikey}`;
 
+        $("#current").empty();
+        
+        $.ajax({
+            type: "POST",
+            contentType: "application/json",
+            url: "http://localhost:3000/users/holdings",
+            data: JSON.stringify(tickReq)
+        }).then(results => {
+            console.log(results)
+            if (results === 'Not found!') {
+                isInPort = false;
+                $("#current").append(`<p class ='my-2 text-primary'>You currently own 0 shares of ${userTicker}</p>`)
+
+            } else {
+                isInPort = true;
+                $("#current").append(`<p class ='my-2 text-primary'>You currently own ${results[0].quantity} shares of ${userTicker}</p>`)
+            }
+            
+
+        })
+
         $.get(keyURL, data => {
-            console.log(data);
-            $("#current").empty();
+
             let shareCount = 0;
 
 
             stockName = data['bestMatches'][0]['2. name'];
 
-            $("#current").append(`<p class ='my-2 text-primary'>You currently own ${shareCount} shares of ${userTicker}</p>`)
             $("#current").append(`<p class ='h4 my-2' id='stock-name'>${data['bestMatches'][0]['2. name']}</p>`)
         }).then(() => {
 
             $.get(apiURL, data => {
-                console.log(data)
+
                 let price = data["Global Quote"]["05. price"];
                 $("#stock-name").append(`<p id='api-price'class='h4 my-2 text-white'>Current Price: ${numFormat(parseFloat(price))}</p>\n<p style='font-size:11px' id='alpha-vantage' class='text-warning'>Powered by Alpha Vantage</p>`)
             });
