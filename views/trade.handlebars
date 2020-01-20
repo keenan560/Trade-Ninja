@@ -83,7 +83,8 @@
 
     let userPrice = parseFloat($("#price").val());
     let stockName = '';
-    let isInPort ;
+    let isInPort;
+    let tickerBal = 0;
 
     $(document).ready(() => {
         $.get("http://localhost:3000/cash/users", (data, status) => {
@@ -188,8 +189,32 @@
 
         }
 
+        if (orderType === "Sell" && !isInPort) {
+            $("#current").empty();
+            $("#total").empty();
+            $("#trade-form")[0].reset();
+            $("#alert-space").append(`<div class="alert alert-transparent text-warning" role="alert">Order not successful plese check holdings!</div>`);
 
-        if (orderType === "Sell" & isInPort ) {
+            setTimeout(() => {
+                $("#alert-space").empty();
+
+            }, 3000);
+        }
+
+        if (orderType === "Sell" && isInPort && quantity > tickerBal) {
+            $("#current").empty();
+            $("#total").empty();
+            $("#trade-form")[0].reset();
+            $("#alert-space").append(`<div class="alert alert-transparent text-warning" role="alert">Order not successful insufficient amount requested</div>`);
+
+            setTimeout(() => {
+                $("#alert-space").empty();
+
+            }, 3000);
+        }
+
+
+        if (orderType === "Sell" && isInPort && quantity <= tickerBal) {
 
             let order = {
                 ticker: ticker.toUpperCase(),
@@ -213,54 +238,37 @@
                 data: JSON.stringify(order)
             }).then(results => {
                 console.log(results);
-                {
-                    {
-                        if (results === 'Not found please check your holdings!') {
-                            $("#alert-space").append(`<div class="alert alert-transparent text-warning"role="alert">Order not successful! Please check holdings</div>`);
 
-                            setTimeout(() => {
-                                $("#alert-space").empty();
-                                window.location = "/portfolio"
-                            }, 3000);
-                        } else {
-                            $.ajax({
-                                type: "POST",
-                                contentType: "application/json",
-                                url: "http://localhost:3000/trades",
-                                data: JSON.stringify(order)
-                            }).then(results => {
-                                console.log(results);
-                            });
-
-                            $.ajax({
-                                type: "POST",
-                                contentType: "application/json",
-                                url: "http://localhost:3000/sell/cash",
-                                data: JSON.stringify(cash)
-                            }).then(results => {
-                                console.log(results);
-                                $("#trade-form")[0].reset();
-
-                                $("#alert-space").append(`<div class="alert alert-transparent text-success" role="alert">Your order was place successfully!</div>`);
-
-                                setTimeout(() => {
-                                    $("#alert-space").fadeOut(3);
-                                    window.location.replace("./history");
-                                }, 3000)
-                            })
-                        }
-                    }
-                }
             });
 
 
+            $.ajax({
+                type: "POST",
+                contentType: "application/json",
+                url: "http://localhost:3000/trades",
+                data: JSON.stringify(order)
+            }).then(results => {
+                console.log(results);
+            });
 
+            $.ajax({
+                type: "POST",
+                contentType: "application/json",
+                url: "http://localhost:3000/sell/cash",
+                data: JSON.stringify(cash)
+            }).then(results => {
+                console.log(results);
+                $("#trade-form")[0].reset();
 
+                $("#alert-space").append(`<div class="alert alert-transparent text-success" role="alert">Your order was place successfully!</div>`);
 
-
+                setTimeout(() => {
+                    $("#alert-space").fadeOut(3);
+                    window.location.replace("./history");
+                }, 3000)
+            })
 
         }
-
 
 
     })
@@ -274,7 +282,7 @@
         let keyURL = `https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=${userTicker}&apikey=${apikey}`;
 
         $("#current").empty();
-        
+
         $.ajax({
             type: "POST",
             contentType: "application/json",
@@ -288,9 +296,10 @@
 
             } else {
                 isInPort = true;
+                tickerBal = results[0].quantity;
                 $("#current").append(`<p class ='my-2 text-primary'>You currently own ${results[0].quantity} shares of ${userTicker}</p>`)
             }
-            
+
 
         })
 
@@ -313,7 +322,7 @@
 
         })
 
-
+        console.log(isInPort)
 
     })
 

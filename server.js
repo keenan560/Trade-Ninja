@@ -117,14 +117,14 @@ app.get("/portfolio", redirectLogin, (req, res) => {
 
         connection.query(`SELECT * FROM holdings rs
             WHERE user_name ='${user.user_name}'`, (err, results) => {
-            if (err) throw err;
-            let portVal = 0;
+                if (err) throw err;
+                let portVal = 0;
 
-            results.forEach(order => portVal += order.total);
+                results.forEach(order => portVal += order.total);
 
-            res.render('portfolio', { title: "Holdings", userName: user.user_name, holdings: adjHoldings, portVal: numFormat(portVal) });
+                res.render('portfolio', { title: "Holdings", userName: user.user_name, holdings: adjHoldings, portVal: numFormat(portVal) });
 
-        })
+            })
 
     })
 
@@ -208,7 +208,7 @@ app.get("/leaders", redirectLogin, (req, res) => {
 });
 
 app.post("/users/holdings", redirectLogin, (req, res) => {
-    const {user} = res.locals;
+    const { user } = res.locals;
     console.log(req.body.ticker)
     connection.query(`SELECT quantity FROM holdings WHERE user_name = '${user.user_name}' and ticker ='${req.body.ticker}'`, (err, results) => {
         if (err) throw err;
@@ -401,19 +401,15 @@ app.post('/holdings', redirectLogin, (req, res) => {
 
 app.post('/sell', redirectLogin, (req, res) => {
     const { user } = res.locals;
-    connection.query(`SELECT * FROM holdings WHERE user_name = '${user.user_name}'`, (err, results) => {
-        if (err) throw err;
 
-        if (results.length === 0) {
-            res.send('Not found please check your holdings!');
-        } else {
-            let stmt = `UPDATE holdings SET quantity = quantity - ${req.body.quantity} WHERE user_name = '${user.user_name}' AND ticker ='${req.body.ticker}'`;
-            connection.query(stmt, (err, results) => {
-                if (err) throw err;
-                console.log(results);
-            });
-        }
+    let stmt = `UPDATE holdings SET quantity = quantity - ${req.body.quantity} WHERE user_name = '${user.user_name}' AND ticker ='${req.body.ticker}'`;
+    connection.query(stmt, (err, results) => {
+        if (err) throw err;
+        console.log(results);
+        res.send('Your holdings were adjsuted!')
     });
+
+
 });
 
 app.post('/sell/cash', (req, res) => {
