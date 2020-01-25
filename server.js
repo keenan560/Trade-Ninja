@@ -6,25 +6,30 @@ const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const bcrypt = require("bcrypt");
 const hbs = require('express-handlebars');
-
-
-
-const mysql = require('mysql');
-const connection = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: '1Barbuda',
-    database: 'trade_ninja_db'
-});
+require('dotenv').config();
 
 const two_hours = 1000 * 60 * 60 * 2;
 const {
-    Port = 3000,
-    NODE_ENV = 'development',
-    SESS_NAME = 'sid',
-    SESS_SECRET = 'ninja',
+    PORT,
+    DB_USER,
+    DB_PASSWORD,
+    DB,
+    HOST,
+    NODE_ENV,
+    SESS_NAME,
+    SESS_SECRET,
     SESS_LIFETIME = two_hours
 } = process.env
+
+const mysql = require('mysql');
+const connection = mysql.createConnection({
+    host: HOST,
+    user: DB_USER,
+    password: DB_PASSWORD,
+    database: DB
+});
+
+
 
 connection.connect();
 
@@ -96,10 +101,15 @@ app.get("/register", redirectHome, (req, res) => {
 
 });
 
+app.get("/contact", (req, res) => {
+    res.render('contact');
+});
+
 app.get("/dashboard", redirectLogin, (req, res) => {
     const { user } = res.locals;
-    // console.log(req.session)
-    res.render('dashboard', { firstName: user.first_name });
+    let fName = user.first_name;
+    let capFname = fName.charAt(0).toUpperCase() + fName.substring(1);
+    res.render('dashboard', { firstName: capFname});
 
 });
 
@@ -169,6 +179,7 @@ app.get("/history", redirectLogin, (req, res) => {
         let portVal = 0
 
         results.forEach(order => portVal += order.total);
+        
 
         res.render('history', { title: 'History', history: results, portVal: numFormat(portVal) });
     })
@@ -199,10 +210,26 @@ app.get("/trade", redirectLogin, (req, res) => {
 
 app.get("/leaders", redirectLogin, (req, res) => {
     const { user } = res.locals;
-    connection.query('SELECT * FROM users', (err, results) => {
+    connection.query(`select user_name, trans_type, count(trans_type) as count, sum(total) * -1 as trans_total from trades where trans_type = 'Buy' group by user_name order by count(trans_type) desc limit 5`, (err, buy_results) => {
         if (err) throw err;
-        console.log(results);
-        res.render('leaders', { title: "Leaderboard", userName: user.user_name, results: results })
+        console.log(buy_results);
+
+        connection.query(`select user_name, trans_type, count(trans_type) as count, sum(total) as trans_total from trades where trans_type = 'Sell' group by user_name order by count(trans_type) desc limit 5`, (err, sell_results) => {
+            if (err) throw err;
+            console.log(sell_results);
+
+            connection.query(`select ticker, count(trans_type) as count, sum(total) * -1 as total from trades where trans_type = 'Buy' group by ticker order by count(trans_type) desc limit 5`, (err, ticker_buys) => {
+                if (err) throw err;
+                console.log(ticker_buys);
+                connection.query(`select ticker, count(trans_type) as count, sum(total) as total from trades where trans_type = 'Sell' group by ticker order by count(trans_type) desc limit 5`, (err, ticker_sells) => {
+                    if (err) throw err;
+                    console.log(ticker_sells);
+
+                    res.render('leaders', { title: "Leaderboard", userName: user.user_name, buy_results: buy_results, sell_results: sell_results, ticker_buys: ticker_buys, ticker_sells: ticker_sells });
+                })
+            })
+
+        })
     })
 
 });
@@ -440,11 +467,11 @@ app.post('/sell/cash', (req, res) => {
 
 
 app.post('/portval', redirectLogin, (req, res) => {
-    const {user} = res.locals;
+    const { user } = res.locals;
     connection.query(`SELECT * FROM holdings WHERE user_name = '${user.user_name}' AND quantity > 0`, (err, results) => {
         if (err) throw err;
         console.log(results);
-        res.send(results);  
+        res.send(results);
     })
 })
 
@@ -461,4 +488,4 @@ app.post('/logout', redirectLogin, (req, res) => {
 
 
 
-app.listen(Port, console.log(`Listening on http://localhost:${Port}`));
+app.listen(PORT,  console.log(`Listening on http://localhost:${PORT}`));

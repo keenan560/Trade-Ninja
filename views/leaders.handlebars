@@ -11,25 +11,97 @@
 <body>
     <div class="container">
         <a href="/dashboard"><button style='width: 150px; height:20%' class="btn mx-2 my-1 btn-transparent text-center dash-button">Dashboard</button></a>
-        <h1 class="h3 my-5">{{userName}} vs all Ninjas!</h1>
-
-        <table class="table">
-            <thead id='leaders'class="thead-primary">
+        <h1 class="h5 my-5">Let's see how {{userName}} compares to other Ninja Activity</h1>
+        <p class="h4 my-3">Top Ninjas by Buys</p>
+        <table class="table my-3">
+            <thead id='leaders' class="thead-primary">
                 <tr>
-                    <th scope="col">User</th>
-                    <th scope="col">Member Since</th>
-                    <th>
+                    <th scope="col">Ninja</th>
+                    <th scope="col">Buys</th>
+                    <th scope="col">Total</th>
+
                 </tr>
             </thead>
             <tbody>
-                {{#each results}}
+                {{#each buy_results}}
                 <tr>
                     <td>{{this.user_name}}</td>
-                    <td>{{this.created_date}}</td>
+                    <td>{{this.count}}</td>
+                    <td>{{this.trans_total}}</td>
                 </tr>
                 {{/each}}
             </tbody>
         </table>
+
+        <p class="h4 my-3">Top Ninjas by Sells</p>
+        <table class="table my-3">
+            <thead id='leaders' class="thead-primary">
+                <tr>
+                    <th scope="col">Ninja</th>
+                    <th scope="col">Sells</th>
+                    <th scope="col">Total</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                {{#each sell_results}}
+                <tr>
+                    <td>{{this.user_name}}</td>
+                    <td>{{this.count}}</td>
+                    <td>{{this.trans_total}}</td>
+
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+
+        <p class="h4 my-3">Top Tickers by Buys</p>
+        <table class="table my-3">
+            <thead id='leaders' class="thead-primary">
+                <tr>
+                    <th scope="col">Ticker</th>
+                    <th scope="col">Buys</th>
+                    <th scope="col">Total</th>
+                    
+
+                </tr>
+            </thead>
+            <tbody>
+                {{#each ticker_buys}}
+                <tr>
+                
+                    <td>{{this.ticker}}</td>
+                    <td>{{this.count}}</td>
+                    <td>{{this.total}}</td>
+
+
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+
+        <p class="h4 my-3">Top Tickers by Sells</p>
+        <table class="table border">
+            <thead id='leaders' class="thead-primary">
+                <tr>
+                    <th scope="col">Ticker</th>
+                    <th scope="col">Sells</th>
+                    <th scope="col">Total</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                {{#each ticker_sells}}
+                <tr>
+                    <td>{{this.ticker}}</td>
+                    <td>{{this.count}}</td>
+                    <td>{{this.total}}</td>
+                    
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+
 
     </div>
 
