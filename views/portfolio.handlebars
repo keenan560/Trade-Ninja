@@ -13,19 +13,15 @@
         <a href="/dashboard"><button style='width: 150px; height:20%' class="btn mx-2 my-1 btn-transparent text-center dash-button">Dashboard</button></a>
 
 
-        <h1 class="text-center my-3">Holdings</h1>  
+        <h1 class="text-center my-3">Holdings</h1>
         <p id="port-val">Portfolio Value: {{portVal}}</p>
-        <button id="market-value" style='width: 150px; height:20%' class="btn float-right my-1 btn-transparent text-center dash-button">Market Value</button>
+        <button id="market-value" style='width: 150px; height:20%' class="btn float-right my-1 btn-transparent text-center dash-button">Analyze</button>
 
         <table class="table my-2">
             <thead class="thead-primary">
                 <tr>
                     <th scope="col" class=" ">Ticker</th>
                     <th scope="col" class=" ">Description</th>
-                    <th scope="col" class=" ">Price Acquired</th>
-                    <th scope="col" class=" ">Market Price</th>
-                    <th scope="col" class=" ">Delta</th>
-                    <th scope="col" class=" ">Recommend</th>
                     <th scope="col" class=" ">Quantity</th>
                     <th scope="col" class=" ">Trade Date</th>
                     <th scope="col" class=" ">iD</th>
@@ -36,10 +32,7 @@
                 <tr>
                     <td>{{this.ticker}}</td>
                     <td>{{this.description}}</td>
-                    <td>{{this.price_acquired}}</td>
-                    <td>Work in progress</td>
-                    <td>Work in progress</td>
-                    <td>Work in progress</td>
+                  
                     <td>{{this.quantity}}</td>
                     <td>{{this.date_acquired}}</td>
                     <td>{{this.id}}</td>
@@ -47,6 +40,10 @@
                 {{/each}}
             </tbody>
         </table>
+
+        <div id="alert-space" class="text-center my-3">
+        
+        </div>
     </div>
 
 
@@ -88,21 +85,42 @@
 
         $(document).on("click", "#market-value", event => {
             event.preventDefault();
-             $("tbody").empty();
+            $("table").empty();
+            $("#alert-space").html(`<div class="spinner-border text-danger" role="status"><span class="sr-only"></span></div>`)
+
             $.ajax({
                 type: "GET",
                 contentType: "application/json",
                 url: "http://localhost:3000/refresh"
             }).then(results => {
-                console.log(results[0].ticker)
+                $("#alert-space").empty();
+                $("table").addClass("table my-2");
+                $("table").append(`
+            <thead class="thead-primary">
+                <tr>
+                    <th scope="col" class=" ">Ticker</th>
+                    <th scope="col" class=" ">Description</th>
+                    <th scope="col" class=" ">Price Acquired</th>
+                    <th scope="col" class=" ">Market Price</th>
+                    <th scope="col" class=" ">Delta</th>
+                    <th scope="col" class=" ">Recommend</th>
+                    <th scope="col" class=" ">Quantity</th>
+                    <th scope="col" class=" ">Trade Date</th>
+                    <th scope="col" class=" ">iD</th>
+                </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+                `)
                 results.forEach(ticker => {
-                   
+
                     $("tbody").append(`
                         <tr>
                             <td>${ticker.ticker}</td>
                             <td>${ticker.description}</td>
                             <td>${ticker.price_acquired}</td>
-                            <td>${ticker.market_price}</td>
+                            <td>${parseFloat(ticker.market_price).toFixed(2)}</td>
                             <td>${ticker.delta.toFixed(2)}</td>
                             <td>${ticker.recommend}</td>
                             <td>${ticker.quantity}</td>
@@ -114,10 +132,6 @@
                 })
             })
         });
-            
-
-
-
 
 
 

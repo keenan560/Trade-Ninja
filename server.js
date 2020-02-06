@@ -176,7 +176,7 @@ const analyze = (price1, price2) => {
         case deltaPercent <= 0.05:
             return 'BUY';
             break
-        
+
     }
     return 'WAIT'
 }
@@ -515,7 +515,13 @@ app.post('/sell', redirectLogin, (req, res) => {
     connection.query(stmt, (err, results) => {
         if (err) throw err;
         console.log(results);
-        res.send('Your holdings were adjsuted!')
+
+        connection.query(`DELETE FROM holdings WHERE quantity = 0 AND user_name = '${user.user_name}'`, (err, results) => {
+            if (err) throw err;
+            console.log(results);
+            res.send('Your holdings were adjsuted!');
+        })
+
     });
 
 
