@@ -6,7 +6,10 @@ const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const bcrypt = require("bcrypt");
 const hbs = require('express-handlebars');
+const moment = require('moment');
+const axios = require('axios').default;
 require('dotenv').config();
+
 
 const two_hours = 1000 * 60 * 60 * 2;
 const {
@@ -18,7 +21,8 @@ const {
     NODE_ENV,
     SESS_NAME,
     SESS_SECRET,
-    SESS_LIFETIME = two_hours
+    SESS_LIFETIME = two_hours,
+    API_KEY
 } = process.env
 
 const mysql = require('mysql');
@@ -28,6 +32,7 @@ const connection = mysql.createConnection({
     password: DB_PASSWORD,
     database: DB
 });
+
 
 
 
@@ -109,7 +114,8 @@ app.get("/dashboard", redirectLogin, (req, res) => {
     const { user } = res.locals;
     let fName = user.first_name;
     let capFname = fName.charAt(0).toUpperCase() + fName.substring(1);
-    res.render('dashboard', { firstName: capFname});
+    let now = moment().format("h:mm a");
+    res.render('dashboard', { firstName: capFname, date: now });
 
 });
 
@@ -139,6 +145,82 @@ app.get("/portfolio", redirectLogin, (req, res) => {
     })
 
 })
+function currentPrice(ticker) {
+    const apiURL = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${ticker}&apikey=${API_KEY}`;
+
+    return axios.get(apiURL).then(data => {
+        try {
+            return data.data["Global Quote"]["05. price"];
+        }
+        catch (error) {
+            console.log(error);
+            throw error;
+        }
+    });
+}
+
+
+const analyze = (price1, price2) => {
+    let delta = parseFloat(price2) - parseFloat(price1);
+    let deltaPercent = delta / parseFloat(price1);
+    switch (true) {
+        case delta < 0:
+            return 'SELL';
+            break;
+        case delta === 0:
+            return 'HOLD';
+            break;
+        case deltaPercent >= 0.10:
+            return 'SELL';
+            break;
+        case deltaPercent <= 0.05:
+            return 'BUY';
+            break
+        
+    }
+    return 'WAIT'
+}
+
+app.get("/refresh", redirectLogin, (req, res) => {
+    const { user } = res.locals;
+    connection.query(`SELECT * FROM holdings WHERE user_name = '${user.user_name}' AND quantity > 0`, async (err, results) => {
+        if (err) {
+            console.log(err);
+            res.sendStatus(500);
+            return;
+        }
+
+        try {
+            const array = [];
+            for (let holding of results) {
+
+                let data = await currentPrice(holding.ticker);
+                let delta = parseFloat(data) - holding.price_acquired;
+                let recommendation = analyze(holding.price_acquired, data);
+
+                let updatedTicker = {
+                    ticker: holding.ticker,
+                    description: holding.description,
+                    price_acquired: holding.price_acquired,
+                    market_price: data,
+                    delta: delta,
+                    recommend: recommendation,
+                    quantity: holding.quantity,
+                    trade_date: holding.date_acquired,
+                    id: holding.id
+
+                }
+                array.push(updatedTicker);
+            }
+            res.json(array);
+        } catch (e) {
+            console.log(e);
+            res.sendStatus(500);
+        }
+    });
+});
+
+
 
 app.get("/cash", redirectLogin, (req, res) => {
     const { user } = res.locals;
@@ -179,7 +261,7 @@ app.get("/history", redirectLogin, (req, res) => {
         let portVal = 0
 
         results.forEach(order => portVal += order.total);
-        
+
 
         res.render('history', { title: 'History', history: results, portVal: numFormat(portVal) });
     })
@@ -488,4 +570,4 @@ app.post('/logout', redirectLogin, (req, res) => {
 
 
 
-app.listen(PORT,  console.log(`Listening on http://localhost:${PORT}`));
+app.listen(PORT, console.log(`Listening on http://localhost:${PORT}`));

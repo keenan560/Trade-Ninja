@@ -13,8 +13,10 @@
         <a href="/dashboard"><button style='width: 150px; height:20%' class="btn mx-2 my-1 btn-transparent text-center dash-button">Dashboard</button></a>
 
 
-        <h1 class="text-center my-3">Holdings</h1>
+        <h1 class="text-center my-3">Holdings</h1>  
         <p id="port-val">Portfolio Value: {{portVal}}</p>
+        <button id="market-value" style='width: 150px; height:20%' class="btn float-right my-1 btn-transparent text-center dash-button">Market Value</button>
+
         <table class="table my-2">
             <thead class="thead-primary">
                 <tr>
@@ -23,6 +25,7 @@
                     <th scope="col" class=" ">Price Acquired</th>
                     <th scope="col" class=" ">Market Price</th>
                     <th scope="col" class=" ">Delta</th>
+                    <th scope="col" class=" ">Recommend</th>
                     <th scope="col" class=" ">Quantity</th>
                     <th scope="col" class=" ">Trade Date</th>
                     <th scope="col" class=" ">iD</th>
@@ -34,6 +37,7 @@
                     <td>{{this.ticker}}</td>
                     <td>{{this.description}}</td>
                     <td>{{this.price_acquired}}</td>
+                    <td>Work in progress</td>
                     <td>Work in progress</td>
                     <td>Work in progress</td>
                     <td>{{this.quantity}}</td>
@@ -81,6 +85,42 @@
                 $("#port-val").html(`<p>Portfolio Value: ${numFormat(portVal)}</p>`);
             })
         })
+
+        $(document).on("click", "#market-value", event => {
+            event.preventDefault();
+             $("tbody").empty();
+            $.ajax({
+                type: "GET",
+                contentType: "application/json",
+                url: "http://localhost:3000/refresh"
+            }).then(results => {
+                console.log(results[0].ticker)
+                results.forEach(ticker => {
+                   
+                    $("tbody").append(`
+                        <tr>
+                            <td>${ticker.ticker}</td>
+                            <td>${ticker.description}</td>
+                            <td>${ticker.price_acquired}</td>
+                            <td>${ticker.market_price}</td>
+                            <td>${ticker.delta.toFixed(2)}</td>
+                            <td>${ticker.recommend}</td>
+                            <td>${ticker.quantity}</td>
+                            <td>${ticker.trade_date}</td>
+                            <td>${ticker.id}</td>
+                        </tr>
+                    
+                    `)
+                })
+            })
+        });
+            
+
+
+
+
+
+
     </script>
 </body>
 
