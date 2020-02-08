@@ -292,18 +292,18 @@ app.get("/trade", redirectLogin, (req, res) => {
 
 app.get("/leaders", redirectLogin, (req, res) => {
     const { user } = res.locals;
-    connection.query(`select user_name, trans_type, count(trans_type) as count, sum(total) * -1 as trans_total from trades where trans_type = 'Buy' group by user_name order by count(trans_type) desc limit 5`, (err, buy_results) => {
+    connection.query(`select user_name, trans_type, count(trans_type) as count, sum(total) * -1 as trans_total from trades where trans_type = 'Buy' group by user_name order by count(trans_type) desc`, (err, buy_results) => {
         if (err) throw err;
         console.log(buy_results);
 
-        connection.query(`select user_name, trans_type, count(trans_type) as count, sum(total) as trans_total from trades where trans_type = 'Sell' group by user_name order by count(trans_type) desc limit 5`, (err, sell_results) => {
+        connection.query(`select user_name, trans_type, count(trans_type) as count, sum(total) as trans_total from trades where trans_type = 'Sell' group by user_name order by count(trans_type) desc`, (err, sell_results) => {
             if (err) throw err;
             console.log(sell_results);
 
-            connection.query(`select ticker, count(trans_type) as count, sum(total) * -1 as total from trades where trans_type = 'Buy' group by ticker order by count(trans_type) desc limit 5`, (err, ticker_buys) => {
+            connection.query(`select ticker, count(trans_type) as count, sum(total) * -1 as total from trades where trans_type = 'Buy' group by ticker order by count(trans_type) desc`, (err, ticker_buys) => {
                 if (err) throw err;
                 console.log(ticker_buys);
-                connection.query(`select ticker, count(trans_type) as count, sum(total) as total from trades where trans_type = 'Sell' group by ticker order by count(trans_type) desc limit 5`, (err, ticker_sells) => {
+                connection.query(`select ticker, count(trans_type) as count, sum(total) as total from trades where trans_type = 'Sell' group by ticker order by count(trans_type) desc`, (err, ticker_sells) => {
                     if (err) throw err;
                     console.log(ticker_sells);
 

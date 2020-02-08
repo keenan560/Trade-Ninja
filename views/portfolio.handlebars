@@ -17,8 +17,8 @@
         <p id="port-val">Portfolio Value: {{portVal}}</p>
         <button id="market-value" style='width: 150px; height:20%' class="btn float-right my-1 btn-transparent text-center dash-button">Analyze</button>
 
-        <table class="table my-2">
-            <thead class="thead-primary">
+        <table id=''class="display table-striped">
+            <thead class="bg-primary">
                 <tr>
                     <th scope="col" class=" ">Ticker</th>
                     <th scope="col" class=" ">Description</th>
@@ -86,6 +86,7 @@
         $(document).on("click", "#market-value", event => {
             event.preventDefault();
             $("table").empty();
+            $("table").removeClass("table-striped")
             $("#alert-space").html(`<div class="spinner-border text-danger" role="status"><span class="sr-only"></span></div>`)
 
             $.ajax({
@@ -94,9 +95,9 @@
                 url: "http://localhost:3000/refresh"
             }).then(results => {
                 $("#alert-space").empty();
-                $("table").addClass("table my-2");
+                $("table").removeClass("table-striped");
                 $("table").append(`
-            <thead class="thead-primary">
+            <thead class="bg-primary">
                 <tr>
                     <th scope="col" class=" ">Ticker</th>
                     <th scope="col" class=" ">Description</th>

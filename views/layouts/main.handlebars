@@ -7,14 +7,16 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
         crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Press+Start+2P&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Catamaran|Heebo|Oswald&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css?family=Fruktur|Righteous&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css">
     <title>{{title}}</title>
 </head>
 
 <style>
     body {
-        background-color: black !important;
+        background-color: rgb(20, 20, 20) !important;
         color: white !important;
         font-family: 'Heebo', sans-serif !important;
     }
@@ -76,32 +78,23 @@
         color: white !important;
 
     }
-
-    thead {
-        background-color:rgb(46, 127, 247) !important;
-        color: white !important;
-        border: solid thick white !important;
-    }
-
-    #history-head {
-        background-color:rgb(110,117, 124) !important;
-        color: white !important;
-        border: solid thick white !important;
-    }
-
-    #leaders {
-      
-        background-color: darkred !important ;
-    }
-
-    tbody {
-        border:  solid white;
-        color: white 
-    }
+   
 
     #market-value:hover {
         background-color: rgb(68, 156, 87);
         
+    }
+
+    label, .dataTables_info, #myTable_previous, .paginate_button, #myTable_next, a {
+        color: white !important ;
+    }
+
+    tbody {
+        color: black !important;
+    }
+
+    marquee {
+        font-family: 'Press Start 2P', cursive;
     }
 
 </style>
@@ -109,7 +102,20 @@
 <body style="font-family: 'Stylish', sans-serif;">
     {{{body}}}
 
-  
+
+<script src="https://code.jquery.com/jquery-3.4.1.js" integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
+    crossorigin="anonymous"></script>
+
+<script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+  <script type="text/javascript">
+      $(document).ready(function () {
+         
+             $('table.display').DataTable({rowReorder: true, language: {
+                  "decimal": ",",
+                  "thousands": "."}});
+            
+        });
+  </script>
 </body>
 
 </html>
