@@ -8,6 +8,7 @@ const bcrypt = require("bcrypt");
 const hbs = require('express-handlebars');
 const moment = require('moment');
 const axios = require('axios').default;
+const nodemailer = require('nodemailer');
 require('dotenv').config();
 
 
@@ -22,7 +23,9 @@ const {
     SESS_NAME,
     SESS_SECRET,
     SESS_LIFETIME = two_hours,
-    API_KEY
+    API_KEY,
+    EMAIL_ACCOUNT,
+    EMAIL_PASSWORD
 } = process.env
 
 const mysql = require('mysql');
@@ -32,7 +35,6 @@ const connection = mysql.createConnection({
     password: DB_PASSWORD,
     database: DB
 });
-
 
 
 
@@ -89,6 +91,21 @@ const numFormat = num => {
     return '$' + num.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
 }
 
+// Emails
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: EMAIL_ACCOUNT,
+        pass: EMAIL_PASSWORD
+    }
+});
+
+
+
+
+
+
+
 // ***** ROUTES ******
 app.get("/", redirectHome, (req, res) => {
     const { user } = req.session;
@@ -112,6 +129,7 @@ app.get("/contact", (req, res) => {
 
 app.get("/dashboard", redirectLogin, (req, res) => {
     const { user } = res.locals;
+    console.log(res.locals.email_address)
     let fName = user.first_name;
     let capFname = fName.charAt(0).toUpperCase() + fName.substring(1);
     let now = moment().format("h:mm a");
@@ -123,6 +141,16 @@ app.get("/about", (req, res) => {
     res.render('about');
 });
 
+
+app.get("/forget_username", (req, res) => {
+    res.render('forget_username');
+})
+
+
+app.get("/forget_password", (req, res) => {
+    res.render('forget_password');
+})
+
 app.get("/portfolio", redirectLogin, (req, res) => {
     const { user } = res.locals;
     connection.query(`SELECT * FROM holdings WHERE user_name = '${user.user_name}'`, (err, results) => {
@@ -133,14 +161,14 @@ app.get("/portfolio", redirectLogin, (req, res) => {
 
         connection.query(`SELECT * FROM holdings rs
             WHERE user_name ='${user.user_name}'`, (err, results) => {
-                if (err) throw err;
-                let portVal = 0;
+            if (err) throw err;
+            let portVal = 0;
 
-                results.forEach(order => portVal += order.total);
+            results.forEach(order => portVal += order.total);
 
-                res.render('portfolio', { title: "Holdings", userName: user.user_name, holdings: adjHoldings, portVal: numFormat(portVal) });
+            res.render('portfolio', { title: "Holdings", userName: user.user_name, holdings: adjHoldings, portVal: numFormat(portVal) });
 
-            })
+        })
 
     })
 
@@ -316,6 +344,121 @@ app.get("/leaders", redirectLogin, (req, res) => {
 
 });
 
+app.get("/password_reset", (req, res) => {
+    res.render('reset');
+})
+
+
+app.post("/change_password", async (req, res) => {
+    const { username } = req.body;
+    const { password1 } = req.body;
+
+    try {
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password1, salt);
+        let stmt = `UPDATE users SET password = '${hashedPassword}' WHERE user_name = '${username}'`
+        connection.query(stmt, (err, results) => {
+            if (err) throw err;
+            console.log(results);
+
+            res.send("Password changed successfully!")
+        })
+    } catch {
+        res.send('Password change failed!')
+    }
+
+})
+
+app.post("/forget_username", (req, res) => {
+    const { email } = req.body;
+    console.log(email)
+    let stmt = `SELECT * FROM users WHERE email_address ='${email}'`;
+    connection.query(stmt, (err, results) => {
+        if (err) throw err;
+        console.log(results);
+        if (results.length === 0) {
+            res.send('Email not found');
+        }
+
+        if (results.length > 0) {
+
+            const forgotUsername = {
+                from: EMAIL_ACCOUNT,
+                to: `${email}`,
+                subject: 'Username Recovery',
+                text:
+                    `Kon'nichiwa Ninja,
+
+                 Please see your username below:
+
+                 ${results[0].user_name}
+
+                 Regards,
+
+                 Trade Ninja Support
+                `
+            };
+
+            transporter.sendMail(forgotUsername, (error, info) => {
+                if (error) {
+                    console.log(error)
+                } else {
+                    console.log('Email sent' + info.response);
+                    res.send('Email success!');
+                }
+            })
+
+
+        }
+    })
+})
+
+app.post("/forget_password", (req, res) => {
+    const { email } = req.body;
+    console.log(email);
+    let stmt = `SELECT * FROM users WHERE email_address ='${email}'`;
+    connection.query(stmt, (err, results) => {
+        if (err) throw err;
+        console.log(results);
+        if (results.length === 0) {
+            res.send('Email not found');
+        }
+
+        if (results.length > 0) {
+
+            const forgotPassword = {
+                from: EMAIL_ACCOUNT,
+                to: `${email}`,
+                subject: 'Password Reset',
+                text:
+                    `Kon'nichiwa Ninja,
+
+                Please click the link below to reset your password.
+                
+                http://localhost:3000/password_reset
+                 
+
+                Regards,
+
+                Trade Ninja Support
+                `
+            };
+
+            transporter.sendMail(forgotPassword, (error, info) => {
+                if (error) {
+                    console.log(error)
+                } else {
+                    console.log('Email sent' + info.response);
+                    res.send('Email success!');
+                }
+            })
+
+
+        }
+    })
+})
+
+
 app.post("/users/holdings", redirectLogin, (req, res) => {
     const { user } = res.locals;
     console.log(req.body.ticker)
@@ -363,7 +506,7 @@ app.post("/users/username", (req, res) => {
 
 
 app.post("/users", redirectHome, async (req, res) => {
-
+    const { user } = res.locals;
     try {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(req.body.password, salt);
@@ -373,7 +516,29 @@ app.post("/users", redirectHome, async (req, res) => {
             if (err) {
                 return console.error(err.message);
             }
+            const welcomeMessage = {
+                from: EMAIL_ACCOUNT,
+                to: `${req.body.emailAddress}`,
+                subject: 'Welcome to Trade Ninja!',
+                text:
+                    `Kon'nichiwa ${req.body.firstName},
 
+                    Thank you for creating your free account with Trade Ninja! We are excited that you have chosen to
+                    begin your journey to be the trade ninja master.
+
+                    Regards,
+
+                    Trade Ninja Support
+                    `
+            };
+
+            transporter.sendMail(welcomeMessage, (error, info) => {
+                if (error) {
+                    console.log(error)
+                } else {
+                    console.log('Email sent' + info.response);
+                }
+            })
             res.send("Ninja add successful!");
 
 
