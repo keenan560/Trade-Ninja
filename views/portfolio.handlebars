@@ -121,7 +121,7 @@
                             <td>${ticker.ticker}</td>
                             <td>${ticker.description}</td>
                             <td>${ticker.price_acquired}</td>
-                            <td>${parseFloat(ticker.market_price).toFixed(2)}</td>
+                            <td>${ticker.market_price}</td>
                             <td>${ticker.delta.toFixed(2)}</td>
                             <td>${ticker.recommend}</td>
                             <td>${ticker.quantity}</td>
@@ -134,7 +134,9 @@
             })
         });
 
-
+        function formatNumber(num) {
+                return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+            }
 
     </script>
 </body>

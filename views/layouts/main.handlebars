@@ -5,12 +5,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
-        crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <link href="https://fonts.googleapis.com/css?family=Press+Start+2P&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Catamaran|Heebo|Oswald&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css?family=Fruktur|Righteous&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Fruktur|Righteous&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css">
     <title>{{title}}</title>
 </head>
 
@@ -62,7 +62,8 @@
         border: thick solid white !important
     }
 
-    #logout, .btn-transparent {
+    #logout,
+    .btn-transparent {
         border: thick solid gray !important;
         color: gray !important;
     }
@@ -78,15 +79,20 @@
         color: white !important;
 
     }
-   
+
 
     #market-value:hover {
         background-color: rgb(68, 156, 87);
-        
+
     }
 
-    label, .dataTables_info, #myTable_previous, .paginate_button, #myTable_next, a {
-        color: white !important ;
+    label,
+    .dataTables_info,
+    #myTable_previous,
+    .paginate_button,
+    #myTable_next,
+    a {
+        color: white !important;
     }
 
     tbody {
@@ -105,32 +111,35 @@
 
     .reset:hover {
         color: dodgerblue !important;
-       
+
     }
 
-   table {
-       text-align: left !important;
-   }
-
+    table {
+        text-align: left !important;
+    }
+    
 </style>
 
 <body style="font-family: 'Stylish', sans-serif;">
     {{{body}}}
 
 
-<script src="https://code.jquery.com/jquery-3.4.1.js" integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
-    crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.js"
+        integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU=" crossorigin="anonymous"></script>
+   
+    <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+    
 
-<script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
-  <script type="text/javascript">
-      $(document).ready(function () {
-         
-             $('table.display').DataTable({rowReorder: true, language: {
-                  "decimal": ",",
-                  "thousands": "."}});
-            
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            $('table.display').DataTable({
+              
+            });
+
+
         });
-  </script>
+    </script>
 </body>
 
 </html>

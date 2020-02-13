@@ -33,7 +33,8 @@ const connection = mysql.createConnection({
     host: HOST,
     user: DB_USER,
     password: DB_PASSWORD,
-    database: DB
+    database: DB,
+    dateStrings: true
 });
 
 
@@ -73,6 +74,16 @@ const redirectHome = (req, res, next) => {
     } else {
         next();
     }
+}
+    function formatNumber(num) {
+        return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+    }
+function currencyFormat(num) {
+    return '$' + num.toString().toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+}
+
+function numberWithCommas(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
 app.use((req, res, next) => {
@@ -153,20 +164,39 @@ app.get("/forget_password", (req, res) => {
 
 app.get("/portfolio", redirectLogin, (req, res) => {
     const { user } = res.locals;
-    connection.query(`SELECT * FROM holdings WHERE user_name = '${user.user_name}'`, (err, results) => {
+    let stmt = `select user_name, id, ticker, description, price_acquired, quantity, total, DATE(date_acquired) from holdings  WHERE user_name = '${user.user_name}'`;
+    connection.query(stmt, (err, results) => {
         if (err) throw err;
-        let holdings = results;
-        let adjHoldings = holdings.filter(stock => stock.quantity > 0);
+        let portVal = 0;
+        let formattedResults = [];
+        results.forEach(order => portVal += order.total);
+
+        for (let i = 0; i < results.length; i++) {
+
+            let order = {
+                user_name: results[i].user_name,
+                id: results[i].id,
+                ticker: results[i].ticker,
+                description: results[i].description,
+                price_acquired: numberWithCommas(results[i].price_acquired),
+                quantity: formatNumber(results[i].quantity),
+                total: formatNumber(results[i].total),
+                date_acquired: results[i]['DATE(date_acquired)']
+            }
+
+            formattedResults.push(order);
+        }
+        let adjHoldings = formattedResults.filter(stock => stock.quantity > 0);
 
 
-        connection.query(`SELECT * FROM holdings rs
-            WHERE user_name ='${user.user_name}'`, (err, results) => {
+
+        connection.query(`SELECT * FROM holdings WHERE user_name ='${user.user_name}'`, (err, results) => {
             if (err) throw err;
             let portVal = 0;
 
             results.forEach(order => portVal += order.total);
 
-            res.render('portfolio', { title: "Holdings", userName: user.user_name, holdings: adjHoldings, portVal: numFormat(portVal) });
+            res.render('portfolio', { title: "Holdings", userName: user.user_name, holdings: adjHoldings, portVal: formatNumber(portVal) });
 
         })
 
@@ -200,7 +230,7 @@ const analyze = (price1, price2) => {
             break;
         case deltaPercent >= 0.10:
             return 'SELL';
-            break;
+            break;h
         case deltaPercent <= 0.05:
             return 'BUY';
             break
@@ -229,11 +259,11 @@ app.get("/refresh", redirectLogin, (req, res) => {
                 let updatedTicker = {
                     ticker: holding.ticker,
                     description: holding.description,
-                    price_acquired: holding.price_acquired,
-                    market_price: data,
+                    price_acquired: formatNumber(holding.price_acquired),
+                    market_price: formatNumber(parseFloat(data)),
                     delta: delta,
                     recommend: recommendation,
-                    quantity: holding.quantity,
+                    quantity: formatNumber(holding.quantity),
                     trade_date: holding.date_acquired,
                     id: holding.id
 
@@ -281,17 +311,35 @@ app.get("/cash/users", redirectLogin, (req, res) => {
 
 });
 
+
 app.get("/history", redirectLogin, (req, res) => {
     const { user } = res.locals;
-    connection.query(`SELECT * FROM trades WHERE user_name = '${user.user_name}' ORDER BY trade_date DESC`, (err, results) => {
+    let stmt = `select user_name, id, trans_type,ticker, description, price, quantity, total, DATE(trade_date) from trades WHERE user_name = '${user.user_name}' ORDER BY trade_date DESC`;
+    connection.query(stmt, (err, results) => {
         if (err) throw err;
         console.log(results);
         let portVal = 0
-
+        let formattedResults = [];
         results.forEach(order => portVal += order.total);
 
+        for (let i = 0; i < results.length; i++) {
 
-        res.render('history', { title: 'History', history: results, portVal: numFormat(portVal) });
+            let order = {
+                user_name: results[i].user_name,
+                id: results[i].id,
+                trans_type: results[i].trans_type,
+                ticker: results[i].ticker,
+                description: results[i].description,
+                price: formatNumber(results[i].price),
+                quantity: formatNumber(results[i].quantity),
+                total: formatNumber(results[i].total),
+                trade_date: results[i]['DATE(trade_date)']
+            }
+
+            formattedResults.push(order);
+        }
+
+        res.render('history', { title: 'History', history: formattedResults, portVal: numFormat(portVal) });
     })
 
 });
