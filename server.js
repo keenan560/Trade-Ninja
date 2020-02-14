@@ -113,10 +113,6 @@ const transporter = nodemailer.createTransport({
 
 
 
-
-
-
-
 // ***** ROUTES ******
 app.get("/", redirectHome, (req, res) => {
     const { user } = req.session;
@@ -412,7 +408,7 @@ app.post("/change_password", async (req, res) => {
             res.send("Password changed successfully!")
         })
     } catch {
-        res.send('Password change failed!')
+        res.send('Password change failed!');
     }
 
 })
