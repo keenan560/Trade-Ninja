@@ -31,7 +31,6 @@ const {
 const mysql = require('mysql');
 const connection = mysql.createConnection({
     host: HOST,
-    socketPath: 
     user: DB_USER,
     password: DB_PASSWORD,
     database: DB,
