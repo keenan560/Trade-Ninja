@@ -31,6 +31,7 @@ const {
 const mysql = require('mysql');
 const connection = mysql.createConnection({
     host: HOST,
+    port: 3306,
     user: DB_USER,
     password: DB_PASSWORD,
     database: DB,
@@ -75,9 +76,9 @@ const redirectHome = (req, res, next) => {
         next();
     }
 }
-    function formatNumber(num) {
-        return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
-    }
+function formatNumber(num) {
+    return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+}
 function currencyFormat(num) {
     return '$' + num.toString().toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
 }
@@ -226,7 +227,7 @@ const analyze = (price1, price2) => {
             break;
         case deltaPercent >= 0.10:
             return 'SELL';
-            break;h
+            break; h
         case deltaPercent <= 0.05:
             return 'BUY';
             break
@@ -364,22 +365,64 @@ app.get("/trade", redirectLogin, (req, res) => {
 
 app.get("/leaders", redirectLogin, (req, res) => {
     const { user } = res.locals;
+
     connection.query(`select user_name, trans_type, count(trans_type) as count, sum(total) * -1 as trans_total from trades where trans_type = 'Buy' group by user_name order by count(trans_type) desc`, (err, buy_results) => {
         if (err) throw err;
         console.log(buy_results);
+        let f_buy_results = [];
+        buy_results.forEach(user => {
+            let obj = {
+                user_name: user.user_name,
+                trans_type: user.trans_type,
+                count: formatNumber(user.count),
+                trans_total: formatNumber(user.trans_total)
+            }
+            f_buy_results.push(obj);
+        })
 
         connection.query(`select user_name, trans_type, count(trans_type) as count, sum(total) as trans_total from trades where trans_type = 'Sell' group by user_name order by count(trans_type) desc`, (err, sell_results) => {
             if (err) throw err;
             console.log(sell_results);
 
+            let f_sell_results = [];
+            sell_results.forEach(user => {
+                let obj = {
+                    user_name: user.user_name,
+                    trans_type: user.trans_type,
+                    count: formatNumber(user.count),
+                    trans_total: formatNumber(user.trans_total)
+                }
+                f_sell_results.push(obj);
+            })
+
             connection.query(`select ticker, count(trans_type) as count, sum(total) * -1 as total from trades where trans_type = 'Buy' group by ticker order by count(trans_type) desc`, (err, ticker_buys) => {
                 if (err) throw err;
                 console.log(ticker_buys);
+                let f_ticker_buys = [];
+                ticker_buys.forEach(stock => {
+                    let obj = {
+                        ticker: stock.ticker,
+                        count: formatNumber(stock.count),
+                        total: formatNumber(stock.total)
+                    }
+                    f_ticker_buys.push(obj);
+                })
+
                 connection.query(`select ticker, count(trans_type) as count, sum(total) as total from trades where trans_type = 'Sell' group by ticker order by count(trans_type) desc`, (err, ticker_sells) => {
                     if (err) throw err;
                     console.log(ticker_sells);
+                    let f_ticker_sells = [];
+                    ticker_sells.forEach(stock => {
+                        let obj = {
+                            ticker: stock.ticker,
+                            count: formatNumber(stock.count),
+                            total: formatNumber(stock.total)
+                        }
+                        f_ticker_sells.push(obj);
+                    })
 
-                    res.render('leaders', { title: "Leaderboard", userName: user.user_name, buy_results: buy_results, sell_results: sell_results, ticker_buys: ticker_buys, ticker_sells: ticker_sells });
+
+                    res.render('leaders', { title: "Leaderboard", userName: user.user_name, buy_results: f_buy_results, sell_results: f_sell_results, ticker_buys: f_ticker_buys, ticker_sells: f_ticker_sells });
                 })
             })
 
