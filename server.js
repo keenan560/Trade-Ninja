@@ -227,7 +227,7 @@ const analyze = (price1, price2) => {
             break;
         case deltaPercent >= 0.10:
             return 'SELL';
-            break; h
+            break; 
         case deltaPercent <= 0.05:
             return 'BUY';
             break
