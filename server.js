@@ -26,13 +26,14 @@ const {
     SESS_LIFETIME = two_hours,
     API_KEY,
     EMAIL_ACCOUNT,
-    EMAIL_PASSWORD
+    EMAIL_PASSWORD,
+    DB_PORT
 } = process.env
 
 const mysql = require('mysql');
 const connection = mysql.createConnection({
     host: HOST,
-    port: PORT,
+    port: DB_PORT,
     user: DB_USER,
     password: DB_PASSWORD,
     database: DB,
@@ -523,7 +524,7 @@ app.post("/forget_password", (req, res) => {
 
                 Please click the link below to reset your password.
                 
-                http://localhost:3000/password_reset
+                https://trade-ninja-9505.nodechef.com/password_reset
                  
 
                 Regards,
@@ -674,13 +675,13 @@ app.post("/auth", async (req, res) => {
 app.post('/cash', (req, res) => {
     const { user } = res.locals;
     console.log(req.body)
-    let stmt = `INSERT INTO cash (user_name, trans_type, amount, account) VALUES (?)`;
+    let stmt = `INSERT INTO CASH (user_name, trans_type, amount, account) VALUES (?)`;
     let values = [user.user_name, req.body.transType, req.body.amount, req.body.account];
 
     connection.query(stmt, [values], (err, results) => {
         if (err) throw err;
         console.log(results);
-        connection.query(`SELECT * FROM cash WHERE user_name = '${user.user_name}'`, (err, results) => {
+        connection.query(`SELECT * FROM CASH WHERE user_name = '${user.user_name}'`, (err, results) => {
             if (err) throw err;
 
             if (results.length > 0) {
@@ -713,13 +714,13 @@ app.post('/trades', redirectLogin, (req, res) => {
 app.post('/trades/cash', (req, res) => {
     const { user } = res.locals;
     console.log(req.body)
-    let stmt = `INSERT INTO cash (user_name, trans_type, amount) VALUES (?)`;
+    let stmt = `INSERT INTO CASH (user_name, trans_type, amount) VALUES (?)`;
     let values = [user.user_name, req.body.transType, req.body.amount];
 
     connection.query(stmt, [values], (err, results) => {
         if (err) throw err;
         console.log(results);
-        connection.query(`SELECT * FROM cash WHERE user_name = '${user.user_name}'`, (err, results) => {
+        connection.query(`SELECT * FROM CASH WHERE user_name = '${user.user_name}'`, (err, results) => {
             if (err) throw err;
 
             if (results.length > 0) {
@@ -783,13 +784,13 @@ app.post('/sell', redirectLogin, (req, res) => {
 app.post('/sell/cash', (req, res) => {
     const { user } = res.locals;
     console.log(req.body)
-    let stmt = `INSERT INTO cash (user_name, trans_type, amount) VALUES (?)`;
+    let stmt = `INSERT INTO CASH (user_name, trans_type, amount) VALUES (?)`;
     let values = [user.user_name, req.body.transType, req.body.amount];
 
     connection.query(stmt, [values], (err, results) => {
         if (err) throw err;
         console.log(results);
-        connection.query(`SELECT * FROM cash WHERE user_name = '${user.user_name}'`, (err, results) => {
+        connection.query(`SELECT * FROM CASH WHERE user_name = '${user.user_name}'`, (err, results) => {
             if (err) throw err;
 
             if (results.length > 0) {
