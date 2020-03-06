@@ -45,7 +45,7 @@ connection.connect();
 
 const IN_PROD = NODE_ENV === 'production';
 const app = express();
-app.use(cors());
+
 app.use('/', express.static(views));
 app.use(bodyParser.json());
 app.use(session(
@@ -113,7 +113,7 @@ const transporter = nodemailer.createTransport({
     }
 });
 
-
+app.use(cors());
 
 // ***** ROUTES ******
 app.get("/", redirectHome, (req, res) => {
