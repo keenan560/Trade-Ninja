@@ -88,7 +88,7 @@
     let tickerBal = 0;
 
     $(document).ready(() => {
-        $.get("http://localhost:3000/cash/users", (data, status) => {
+        $.get("https://trade-ninja-9505.nodechef.com/cash/users", (data, status) => {
 
             data.forEach(trans => accountBal += trans.amount);
             console.log(accountBal);
@@ -154,7 +154,7 @@
             $.ajax({
                 type: "POST",
                 contentType: "application/json",
-                url: "http://localhost:3000/trades",
+                url: "https://trade-ninja-9505.nodechef.com/trades",
                 data: JSON.stringify(tradeOrder)
             }).then(results => {
                 console.log(results);
@@ -164,7 +164,7 @@
             $.ajax({
                 type: "POST",
                 contentType: "application/json",
-                url: "http://localhost:3000/holdings",
+                url: "https://trade-ninja-9505.nodechef.com/holdings",
                 data: JSON.stringify(order)
             }).then(results => {
                 console.log(results);
@@ -174,7 +174,7 @@
             $.ajax({
                 type: "POST",
                 contentType: "application/json",
-                url: "http://localhost:3000/trades/cash",
+                url: "https://trade-ninja-9505.nodechef.com/trades/cash",
                 data: JSON.stringify(cash)
             }).then(results => {
                 $("#trade-form")[0].reset();
@@ -235,7 +235,7 @@
             $.ajax({
                 type: "POST",
                 contentType: "application/json",
-                url: "http://localhost:3000/sell",
+                url: "https://trade-ninja-9505.nodechef.com/sell",
                 data: JSON.stringify(order)
             }).then(results => {
                 console.log(results);
@@ -246,7 +246,7 @@
             $.ajax({
                 type: "POST",
                 contentType: "application/json",
-                url: "http://localhost:3000/trades",
+                url: "https://trade-ninja-9505.nodechef.com/trades",
                 data: JSON.stringify(order)
             }).then(results => {
                 console.log(results);
@@ -255,7 +255,7 @@
             $.ajax({
                 type: "POST",
                 contentType: "application/json",
-                url: "http://localhost:3000/sell/cash",
+                url: "https://trade-ninja-9505.nodechef.com/sell/cash",
                 data: JSON.stringify(cash)
             }).then(results => {
                 console.log(results);
@@ -287,7 +287,7 @@
         $.ajax({
             type: "POST",
             contentType: "application/json",
-            url: "http://localhost:3000/users/holdings",
+            url: "https://trade-ninja-9505.nodechef.com/users/holdings",
             data: JSON.stringify(tickReq)
         }).then(results => {
             console.log(results)

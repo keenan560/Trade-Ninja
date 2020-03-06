@@ -77,7 +77,7 @@
             $.ajax({
                 type: "POST",
                 contentType: "application/json",
-                url: "http://localhost:3000/portval"
+                url: "https://trade-ninja-9505.nodechef.com/portval"
             }).then(results => {
                 console.log(results);
                 results.forEach(holding => portVal += (holding.price_acquired * holding.quantity));
@@ -98,7 +98,7 @@
             $.ajax({
                 type: "GET",
                 contentType: "application/json",
-                url: "http://localhost:3000/refresh"
+                url: "https://trade-ninja-9505.nodechef.com/refresh"
             }).then(results => {
                 let newBal = 0;
                 console.log(results)

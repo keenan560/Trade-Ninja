@@ -97,7 +97,7 @@
 
                 $.ajax({
                     type: "POST",
-                    url: "http://localhost:3000/cash",
+                    url: "https://trade-ninja-9505.nodechef.com/cash",
                     contentType: "application/json",
                     data: JSON.stringify(data)
                 }).then(results => {
@@ -121,7 +121,7 @@
 
             if (transType === "withdraw") {
 
-                $.get('http://localhost:3000/cash/users', (data, status) => {
+                $.get('https://trade-ninja-9505.nodechef.com/cash/users', (data, status) => {
                     console.log(data);
                     let currBal = 0;
                     data.forEach(trans => {
@@ -138,7 +138,7 @@
 
                         $.ajax({
                             type: "POST",
-                            url: "http://localhost:3000/cash",
+                            url: "https://trade-ninja-9505.nodechef.com/cash",
                             contentType: "application/json",
                             data: JSON.stringify(data)
                         }).then(results => {

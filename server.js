@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 const path = require("path");
 const views = path.join(__dirname, 'views');
 const bodyParser = require('body-parser');
@@ -31,7 +32,7 @@ const {
 const mysql = require('mysql');
 const connection = mysql.createConnection({
     host: HOST,
-    port: 3306,
+    port: PORT,
     user: DB_USER,
     password: DB_PASSWORD,
     database: DB,
@@ -44,7 +45,7 @@ connection.connect();
 
 const IN_PROD = NODE_ENV === 'production';
 const app = express();
-
+app.use(cors());
 app.use('/', express.static(views));
 app.use(bodyParser.json());
 app.use(session(
