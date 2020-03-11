@@ -65,7 +65,7 @@
     <h1 class="my-5 mx-auto text-center">Login to begin</h1>
 
 
-    <div class="container">
+    <div id='loginbox'class="container">
         <form id="login">
             <div class="form-group">
                 <label for='username'>Username</label>
@@ -137,8 +137,8 @@
                 }
 
                 if (results === "Login Successful!") {
-
-                    $("#alert-space").html(`<div class="spinner-border text-danger" role="status"><span class="sr-only"></span></div>`)
+                    $("#submit").append(`<span class="spinner-border spinner-border-sm m-1" role="status" aria-hidden="true"></span>`)
+                    {{!-- $("#alert-space").html(`<div class="spinner-border text-danger" role="status"><span class="sr-only"></span></div>`) --}}
                     setTimeout(() => {
                         window.location = "/dashboard"
                     }, 3000);

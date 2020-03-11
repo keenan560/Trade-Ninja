@@ -36,7 +36,9 @@
         <div class="text-center my-5">
             <a href="/contact"><button style='width: 150px; height:100px' class="btn mx-2 my-1 btn-transparent text-center dash-button">Contact Us</button></a>
 
-            <button id='logout' style='width: 150px; height:100px' class="btn my-1 btn-transparent mx-2">Ninja Out</button>
+            <button id='logout' style='width: 150px; height:100px' class="btn my-1 btn-transparent mx-2">Ninja Out
+                
+            </button>
         </div>
            
 
@@ -67,7 +69,8 @@
                 console.log(results);
 
                 if (results === "Ninja vanish!") {
-                    $("#alert-space").append(`<div class="spinner-border text-danger" role="status"></div>`);
+                    {{!-- $("#alert-space").append(`<div class="spinner-border text-danger" role="status"></div>`); --}}
+                    $("#logout").append(`<span class="spinner-border spinner-border-sm my-1" role="status" aria-hidden="true"></span>`)
                     setTimeout(() => {
                         window.location = 'login'
                     }, 3000);

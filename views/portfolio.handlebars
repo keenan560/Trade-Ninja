@@ -14,8 +14,7 @@
 
 
         <h1 class="text-center my-3">Holdings</h1>
-        <p id="port-val">Portfolio Value: {{portVal}}</p>
-        <div id='port-delta'></div>
+        <p class='container my-auto mx-auto' id="port-val">Portfolio Value: {{portVal}}</p>
         <button id="market-value" style='width: 150px; height:20%' class="btn float-right my-1 btn-transparent text-center dash-button">Analyze</button>
 
         <table id='' class="display table-striped">
@@ -93,7 +92,9 @@
             console.log("old:" + " " + oldBal);
             $("table").empty();
             $("table").removeClass("table-striped")
-            $("#alert-space").html(`<div class="spinner-border text-danger" role="status"><span class="sr-only"></span></div>`)
+            {{!-- $("#alert-space").html(`<div class="spinner-border text-danger" role="status"><span class="sr-only"></span></div>`) --}}
+            $("#alert-space").html(`<div class="spinner-grow text-success" role="status"><span class="sr-only">Loading...</span></div>`)
+
 
             $.ajax({
                 type: "GET",
@@ -101,7 +102,7 @@
                 url: "https://trade-ninja-9505.nodechef.com/refresh"
             }).then(results => {
                 let newBal = 0;
-                console.log(results)
+
                 results.forEach(holding => newBal += (parseFloat(holding.market_price) * parseInt(holding.quantity)));
 
 
@@ -146,17 +147,21 @@
 
                 switch (true) {
                     case newBal < parseInt(oldBal):
-                        $("#port-delta").html(`<p class='text-danger float-left'>Down by $${formatNumber(newBal - parseInt(oldBal))}</p>`);
+                        $("#port-val").empty();
+                        $("#port-val").append(`<p class='text-left my-1 mx-auto'>Portfolio Value: ${numFormat(parseFloat(newBal))}</p>`);
+                        $("#port-val").append(`<p class='text-danger text-left my-1 mx-auto'>Down by ${numFormat(newBal - parseFloat(oldBal))}</p>`);
                         break;
-                    case newBal > parseInt(oldBal):
-                        $("#port-delta").html(`<p class='text-success float-left'>Up by $${formatNumber(newBal - parseInt(oldBal))}</p>`);
+                    case newBal > parseFloat(oldBal):
+                        $("#port-val").empty();
+                        $("#port-val").append(`<p class='text-left my-1 mx-auto'>Portfolio Value: ${numFormat(parseFloat(newBal))}</p>`);
+                        $("#port-val").append(`<p class='text-success text-left my-1 mx-auto'>Up by ${numFormat(newBal - parseFloat(oldBal))}</p>`);
                         break;
-                    case newBal === parseInt(oldBal):
-                        $("#port-delta").html(`<p class='text-warning float-left'>No change</p>`);
+                    case newBal === parseFloat(oldBal):
+                        $("#port-val").empty();
+                        $("#port-val").append(`<p class='text-left my-1 mx-auto'>Portfolio Value: ${numFormat(parseFloat(newBal))}</p>`);
+                        $("#port-val").append(`<p class='text-warning text-left my-1 mx-auto'>No change</p>`);
                         break;
                 }
-
-
 
             })
 

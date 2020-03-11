@@ -16,7 +16,7 @@
         <div class="container my-3" id='welcome'>
             <h1 class="my-3 text-center">Ninja Add or Ninja Subtract</h1>
             <div id='balance'>
-                <p id='current-bal' class="float-right h5 text-warning">Cash Available: {{balance}}</p>
+                <p id='current-bal' class="float-right text-warning">Cash Available: {{balance}}</p>
             </div>
             <form id='funds-form' class='my-3'>
 
@@ -86,7 +86,9 @@
             var amount = parseFloat(amount);
             var account = $("#account").val();
 
-
+            if (!amount) {
+                alert('Please enter a whole dollar amount!');
+            }
 
             if (transType === "deposit") {
                 var data = {
