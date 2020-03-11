@@ -21,6 +21,6 @@ A free online simulator that allows you to purchase shares and track their perfo
     - nodemailer
 
 
-#Demo
+# Demo
 
-Try out www.mytradeninja.com
+Try it out www.mytradeninja.com
