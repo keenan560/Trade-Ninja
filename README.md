@@ -23,4 +23,4 @@ A free online simulator that allows you to purchase shares and track their perfo
 
 # Demo
 
-Try it out www.mytradeninja.com
+Try it out www.mytradeninja.com 
