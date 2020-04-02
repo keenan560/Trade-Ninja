@@ -66,32 +66,32 @@
             <div class='my-3' id="form-alert">
 
             </div>
-            <form id="register">
+            <form id="register"></form>
                 <div class="form-group">
                     <label for='first'>First Name</label>
-                    <input type="text" class="form-control" id="first" name="first">
+                    <input type="text" required class="form-control" id="first" name="first">
                 </div>
                 <div class="form-group">
                     <label for='last'>Last Name</label>
-                    <input type="text" class="form-control" id="last" name="last">
+                    <input type="text" required class="form-control" id="last" name="last">
                 </div>
                 <div class="form-group">
                     <label for='email'>Email Address</label>
-                    <input type="email" class="form-control" id="email" name="email">
+                    <input type="email" required class="form-control" id="email" name="email">
                     <div id="email-alert"></div>
                 </div>
                 <div class="form-group">
                     <label for='username'>Username</label>
-                    <input type="text" class="form-control" id="username" name="username">
+                    <input type="text" required class="form-control" id="username" name="username">
                     <div id='username-alert'></div>
                 </div>
                 <div class="form-group">
                     <label for="password">Password</label>
-                    <input type="password" class="form-control" id="password1" name="password1">
+                    <input type="password" required class="form-control" id="password1" name="password1">
                 </div>
                 <div class="form-group">
                     <label for="password">Re-enter Password</label>
-                    <input type="password" class="form-control" id="password2" name="password2">
+                    <input type="password" required class="form-control" id="password2" name="password2">
                     <div class="my-3" id='password-alert'>
 
                     </div>
@@ -135,12 +135,6 @@
             $("#email").on("change", event => {
                 let email = event.target.value;
 
-                if (!validEmail(email)) {
-                    $("#email-alert").html(`<div class="alert alert-transparent text-danger" role="alert">Not a valid email address</div>`);
-                    setTimeout(() => {
-                        $("#email-alert").empty();
-                    }, 3000)
-                } else {
                     let data = {
                         email: email
                     }
@@ -151,24 +145,38 @@
                         url: "https://trade-ninja-9505.nodechef.com/users/email",
                         data: JSON.stringify(data)
                     }).then((results) => {
+                        console.log(results)
+                        
+                        if (results.errors.length > 0) {
+                             $("#email-alert").html(`<div class="alert alert-transparent text-danger" role="alert">${results.errors[0].msg}</div>`);
+                            setTimeout(() => {
+                                $("#email-alert").empty()
+                            }, 3000);
+                        }
 
                         if (results === "Cannot use this email.") {
                             $("#email-alert").html(`<div class="alert alert-transparent text-danger" role="alert">${results}</div>`);
                             setTimeout(() => {
                                 $("#email-alert").empty()
                             }, 3000)
-                        } else if (results === "Okay to use.") {
+                        } 
+                        
+                        if (results === "Okay to use.") {
                             $("#email-alert").html(`<div class="alert alert-transparent text-success" role="alert">${results}</div>`);
                             setTimeout(() => {
                                 $("#email-alert").empty()
                             }, 3000)
                         }
-                        else {
-                            $("#email-alert").empty();
+                        if (results === "Not a valid email address") {
+                             $("#email-alert").html(`<div class="alert alert-transparent text-danger" role="alert">${results}</div>`);
+                            setTimeout(() => {
+                                $("#email-alert").empty()
+                            }, 3000)
                         }
 
+                    
                     })
-                }
+                
             })
 
             $("#username").on("change", event => {

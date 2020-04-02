@@ -20,24 +20,24 @@
             <form id='trade-form' class='my-3'>
                 <div class="form-group">
                     <label for="formGroupExampleInput">Ticker</label>
-                    <input type="text" class="form-control" id="ticker" placeholder="AAPL">
+                    <input type="text" required class="form-control" id="ticker" placeholder="Enter ticker">
                 </div>
                 <label id='current'> </label>
                 <div class="form-group">
                     <label for="exampleFormControlSelect1">Order Type</label>
-                    <select class="form-control" id="order-type">
-                        <option value="">Choose</option>
+                    <select class="form-control" required id="order-type">
+                        <option value="" disabled selected>Choose</option>
                         <option value="Buy">Buy</option>
                         <option value="Sell">Sell</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label for="formGroupExampleInput2">Price</label>
-                    <input type="text" class="form-control" id="price" placeholder="259.47">
+                    <input type="text" required class="form-control" id="price" placeholder="Enter price">
                 </div>
                 <div class="form-group">
                     <label for="formGroupExampleInput2">Quantity</label>
-                    <input type="text" class="form-control" id="quantity" placeholder="1000">
+                    <input type="text" required class="form-control" id="quantity" placeholder="Enter quantity">
                 </div>
                 <div id="total">
 

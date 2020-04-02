@@ -10,6 +10,7 @@ const hbs = require('express-handlebars');
 const moment = require('moment');
 const axios = require('axios').default;
 const nodemailer = require('nodemailer');
+const { check, validationResult } = require('express-validator');
 require('dotenv').config();
 
 
@@ -229,7 +230,7 @@ const analyze = (price1, price2) => {
             break;
         case deltaPercent >= 0.10:
             return 'SELL';
-            break; 
+            break;
         case deltaPercent <= 0.05:
             return 'BUY';
             break
@@ -564,19 +565,39 @@ app.post("/users/holdings", redirectLogin, (req, res) => {
     })
 })
 
-app.post("/users/email", (req, res) => {
+
+app.post("/users/email", [
+    check("email", "Email cannot be empty").not().isEmpty(),
+    check("email", "Invalid email please verify the email address you have provided").isEmail(),
+    check("email", "Email address must be between 4-100 characters long").isLength({ min: 4, max: 100 })
+], async (req, res) => {
     let email = req.body.email;
-    console.log(req.body.email)
-    let stmt = `SELECT * FROM users WHERE email_address = '${email}'`;
-    connection.query(stmt, (err, results) => {
-        if (err) throw err;
-        console.log(results)
-        if (results.length === 0) {
-            res.send("Okay to use.")
+    console.log(req.body.email);
+    try {
+        let errors = await validationResult(req);
+        console.log(errors);
+
+        if (!errors.isEmpty()) {
+            console.log(errors);
+            return res.json({ errors: errors.array() });
         } else {
-            res.send("Cannot use this email.")
+            let stmt = `SELECT * FROM users WHERE email_address = '${email}'`;
+            connection.query(stmt, (err, results) => {
+                if (err) throw err;
+                console.log(results)
+                if (results.length === 0) {
+                    res.send("Okay to use.");
+                } else {
+                    res.send("Cannot use this email.");
+                }
+            })
         }
-    })
+    } catch {
+        res.send("Oops!")
+    }
+
+
+
 });
 
 app.post("/users/username", (req, res) => {
@@ -826,6 +847,7 @@ app.post('/logout', redirectLogin, (req, res) => {
         res.clearCookie(SESS_NAME);
         res.send("Ninja vanish!");
     })
+    connection.end();
 })
 
 

@@ -19,25 +19,24 @@
                 <p id='current-bal' class="float-right text-warning">Cash Available: {{balance}}</p>
             </div>
             <form id='funds-form' class='my-3'>
-
                 <label id='current'> </label>
                 <div class="form-group">
                     <label for="exampleFormControlSelect1">Trans Type</label>
-                    <select class="form-control" id="trans-type">
-                        <option value="">Choose</option>
+                    <select class="form-control" required id="trans-type">
+                        <option value="" disabled selected>Choose</option>
                         <option value="deposit"> Add Cash</option>
                         <option value="withdraw">Cash Out</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label for="formGroupExampleInput">Amount</label>
-                    <input type="text" class="form-control" id="amount" placeholder="$100,000">
+                    <input type="text" required class="form-control" id="amount" placeholder="Enter amount">
                 </div>
                 <label id='current'> </label>
                 <div class="form-group">
                     <label for="exampleFormControlSelect1">Account</label>
                     <select class="form-control" id="account">
-                        <option value="">Choose</option>
+                        <option value="" disabled selected>Choose</option>
                         <option value="TD Ameritrade ..5689">TD Ameritrade ..5689</option>
                         <option value="E*TRADE ..4423">E*TRADE ..4423</option>
                         <option value="Charles Schwab ..7753">Charles Schwab ..7753</option>
@@ -87,6 +86,9 @@
             var account = $("#account").val();
 
             if (!amount) {
+                alert('Please enter a whole dollar amount!');
+            }
+            if (amount.length === 0) {
                 alert('Please enter a whole dollar amount!');
             }
 
