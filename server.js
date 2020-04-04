@@ -847,9 +847,11 @@ app.post('/logout', redirectLogin, (req, res) => {
         res.clearCookie(SESS_NAME);
         res.send("Ninja vanish!");
     })
-    connection.end();
+    
 })
 
 
 
 app.listen(PORT, console.log(`Listening on http://localhost:${PORT}`));
+
+
