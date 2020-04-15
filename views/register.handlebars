@@ -212,8 +212,8 @@
 
             $("#submit").on("click", event => {
                 event.preventDefault();
-                let first = $("#first").val();
-                let last = $("#last").val();
+                let first = $("#first").val().trim();
+                let last = $("#last").val().trim();
                 let email = $("#email").val();
                 let username = $("#username").val();
                 let password1 = $("#password1").val();
@@ -252,7 +252,7 @@
                         $("#password-alert").empty();
                         $("#username-alert").empty();
 
-                        $("#alert-space").html(`<div class="alert text-warning alert-transparent" role="alert">${results}</div>`);
+                        $("#alert-space").html(`<div class="alert text-center text-warning alert-transparent" role="alert">${results}</div>`);
                         setTimeout(() => {
                             $("#alert-space").empty();
                             window.location = "login"
