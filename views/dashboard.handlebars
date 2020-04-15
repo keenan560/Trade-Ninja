@@ -69,13 +69,30 @@
                 console.log(results);
 
                 if (results === "Ninja vanish!") {
-                    {{!-- $("#alert-space").append(`<div class="spinner-border text-danger" role="status"></div>`); --}}
                     $("#logout").append(`<span class="spinner-border spinner-border-sm my-1" role="status" aria-hidden="true"></span>`)
                     setTimeout(() => {
                         window.location = 'login'
                     }, 1500);
                 }
             })
+        })
+
+        $(document).on("click", "#disposal", event => {
+            event.preventDefault();
+            let answer = window.confirm("Are you sure you want to delete your account with Trade Ninja?");
+
+            if (answer) {
+                $.ajax({
+                    type: "POST",
+                    contentType: "application/json",
+                    url: "https://trade-ninja-9505.nodechef.com/disposal"
+                }).then(results => {
+                    console.log(results);
+                })
+            } else {
+                alert("Whoo that was a close one!");
+            }
+
         })
 
     </script>
