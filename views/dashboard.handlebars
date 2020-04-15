@@ -88,6 +88,9 @@
                     url: "https://trade-ninja-9505.nodechef.com/disposal"
                 }).then(results => {
                     console.log(results);
+                    if (results === "Ninja disposed!") {
+                        alert("Your Trade Ninja account has been successfully deleted.");
+                    }
                 })
             } else {
                 alert("Whoo that was a close one!");

@@ -900,6 +900,44 @@ app.post('/logout', redirectLogin, (req, res) => {
     
 })
  
+app.post('/disposal', redirectLogin, (req, res) => {
+    const user = res.locals;
+    userStmt =`DELETE FROM users where user_name ='${user.user_name}'`;
+    cashStmt = `DELETE FROM CASH WHERE user_name ='${user.user_name}'`;
+    tradesStmt = `DELETE FROM trades WHERE user_name ='${user.user_name}'`;
+    holdingsStmt = `DELETE FROM holdings WHERE user_name ='${user.user_name}'`;
+
+
+    connection.query(userStmt, (err, results) => {
+        if (err) throw err;
+        console.log(results);
+    })
+
+    connection.query(cashStmt, (err, results) => {
+        if (err) throw err;
+        console.log(results);
+    })
+
+    connection.query(tradesStmt, (err, results) => {
+        if (err) throw err;
+        console.log(results);
+    })
+
+    connection.query(holdingsStmt, (err, results) => {
+        if (err) throw err;
+        console.log(results);
+        req.session.destroy(err => {
+            if (err) {
+                return res.redirect("/dashboard");
+            }
+
+            res.clearCookie(SESS_NAME);
+            res.send("Ninja disposed!");
+        })
+    });
+
+
+})
 
 connection.connect(function (err) {
     if (err) {
