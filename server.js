@@ -907,9 +907,9 @@ app.post('/disposal', redirectLogin, async (req, res) => {
     tradesStmt = `DELETE FROM trades WHERE user_name ='${user.user_name}'`;
     holdingsStmt = `DELETE FROM trades WHERE user_name ='${user.user_name}'`;
 
-    await connection.query("SET SQL_SAFE_UPDTES = 0");
+    // await connection.query("SET SQL_SAFE_UPDTES = 0");
 
-    connection.query(userStmt, (err, results) => {
+    await connection.query(userStmt, (err, results) => {
         if (err) throw err;
         console.log(results);
 
