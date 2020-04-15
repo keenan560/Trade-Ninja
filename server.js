@@ -900,47 +900,71 @@ app.post('/logout', redirectLogin, (req, res) => {
 
 })
 
+// app.post('/disposal', redirectLogin, async (req, res) => {
+//     const user = res.locals;
+//     userStmt = `DELETE FROM users WHERE user_name ='${user.user_name}'`;
+//     cashStmt = `DELETE FROM CASH WHERE user_name ='${user.user_name}'`;
+//     tradesStmt = `DELETE FROM trades WHERE user_name ='${user.user_name}'`;
+//     holdingsStmt = `DELETE FROM trades WHERE user_name ='${user.user_name}'`;
+
+//     await connection.query(userStmt, (err, results) => {
+//         if (err) throw err;
+//         console.log(results);
+
+//         connection.query(holdingsStmt, (err, results) => {
+//             if (err) throw err;
+//             console.log(results);
+
+//             connection.query(cashStmt, (err, results) => {
+//                 if (err) throw err;
+//                 console.log(results);
+
+//             });
+
+//             connection.query(tradesStmt, (err, results) => {
+//                 if (err) throw err;
+//                 console.log(results);
+
+//             });
+
+//         });
+
+//     });
+//     req.session.destroy(err => {
+//         if (err) {
+//             return res.redirect("/dashboard");
+//         }
+
+//         res.clearCookie(SESS_NAME);
+//         res.send("Ninja disposed!");
+//     })
+// })
 app.post('/disposal', redirectLogin, async (req, res) => {
     const user = res.locals;
-    userStmt = `DELETE FROM users where user_name ='${user.user_name}'`;
+    userStmt = `DELETE FROM users WHERE user_name ='${user.user_name}'`;
     cashStmt = `DELETE FROM CASH WHERE user_name ='${user.user_name}'`;
     tradesStmt = `DELETE FROM trades WHERE user_name ='${user.user_name}'`;
     holdingsStmt = `DELETE FROM trades WHERE user_name ='${user.user_name}'`;
-
-    // await connection.query("SET SQL_SAFE_UPDTES = 0");
-
-    await connection.query(userStmt, (err, results) => {
-        if (err) throw err;
+    try {
+        let results = await connection.query(userStmt);
         console.log(results);
-
-        connection.query(holdingsStmt, (err, results) => {
-            if (err) throw err;
-            console.log(results);
-
-            connection.query(cashStmt, (err, results) => {
-                if (err) throw err;
-                console.log(results);
-
-            });
-
-            connection.query(tradesStmt, (err, results) => {
-                if (err) throw err;
-                console.log(results);
-
-            });
-
-        });
-
-    });
+        let holdinResult = await connection.query(holdingsStmt);
+        console.log(holdinResult);
+        let cashResult = await connection.query(cashStmt);
+        console.log(cashResult);
+        let tradesResult = await connection.query(tradesStmt);
+        console.log(tradesResult);
+    } catch (error) {
+        throw error
+    }
     req.session.destroy(err => {
         if (err) {
             return res.redirect("/dashboard");
         }
-
         res.clearCookie(SESS_NAME);
         res.send("Ninja disposed!");
     })
-})
+});
 
 connection.connect(function (err) {
     if (err) {
