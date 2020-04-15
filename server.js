@@ -921,7 +921,7 @@ app.post('/disposal', redirectLogin, async (req, res) => {
             to: `${email}`,
             subject: 'Ninja Disposed!',
             text:
-                `Kon'nichiwa ${user.firstName}, 
+                `Kon'nichiwa ${user.first_name}, 
             
             We are sad to see you go, when you are ready to continue your journey to become the trade-fu master please register.
 
