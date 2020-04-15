@@ -517,7 +517,7 @@ app.post("/forget_username", (req, res) => {
                 } else {
                     console.log('Email sent' + info.response);
                     res.send('Email success!');
-                   
+
                 }
             })
 
@@ -666,7 +666,7 @@ app.post("/users", redirectHome, async (req, res) => {
                 to: `${req.body.emailAddress}`,
                 subject: 'Welcome to Trade Ninja!',
                 text:
-                   `Kon'nichiwa ${req.body.firstName},
+                    `Kon'nichiwa ${req.body.firstName},
 
                     Thank you for creating your free account with Trade Ninja! We are excited that you have chosen to
                     begin your journey to be the trade ninja master.
@@ -901,7 +901,7 @@ app.post('/logout', redirectLogin, (req, res) => {
 })
 
 app.post('/disposal', redirectLogin, async (req, res) => {
-    const {user} = res.locals;
+    const { user } = res.locals;
     const email = user.email_address;
     userStmt = `DELETE FROM users WHERE user_name ='${user.user_name}'`;
     cashStmt = `DELETE FROM CASH WHERE user_name ='${user.user_name}'`;
@@ -916,35 +916,35 @@ app.post('/disposal', redirectLogin, async (req, res) => {
         console.log(cashResult);
         let tradesResult = await connection.query(tradesStmt);
         console.log(tradesResult);
+        const goodbye = {
+            from: EMAIL_ACCOUNT,
+            to: `${email}`,
+            subject: 'Ninja Disposed!',
+            text:
+                `Kon'nichiwa ${user.firstName}, 
+            
+            We are sad to see you go, when you are ready to continue your journey to become the trade-fu master please register.
+
+            Regards,
+            
+            Trade Ninja Support
+            `
+        };
+
+        transporter.sendMail(goodbye, (error, info) => {
+            if (error) {
+                console.log(error);
+
+            } else {
+                console.log('Email sent' + info.response);
+                res.send('Email success!');
+
+            }
+        })
     } catch (error) {
         throw error
     }
 
-    const goodbye = {
-        from: EMAIL_ACCOUNT,
-        to: `${email}`,
-        subject: 'Username Recovery',
-        text:
-           `Kon'nichiwa ${user.firstName},
-
-            We are sad to see you go, when you are ready to continue your journey to become the trade-fu master please register.
-
-            Regards,
-
-            Trade Ninja Support
-            `
-    };
-
-   await transporter.sendMail(goodbye, (error, info) => {
-        if (error) {
-            console.log(error);
-
-        } else {
-            console.log('Email sent' + info.response);
-            res.send('Email success!');
-
-        }
-    })
 
 
     req.session.destroy(err => {
