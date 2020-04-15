@@ -940,7 +940,7 @@ app.post('/logout', redirectLogin, (req, res) => {
 //     })
 // })
 app.post('/disposal', redirectLogin, async (req, res) => {
-    const user = res.locals;
+    const {user} = res.locals;
     userStmt = `DELETE FROM users WHERE user_name ='${user.user_name}'`;
     cashStmt = `DELETE FROM CASH WHERE user_name ='${user.user_name}'`;
     tradesStmt = `DELETE FROM trades WHERE user_name ='${user.user_name}'`;
