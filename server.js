@@ -923,14 +923,15 @@ app.post('/disposal', redirectLogin, (req, res) => {
                 connection.query(holdingsStmt, (err, results) => {
                     if (err) throw err;
                     console.log(results);
-                    req.session.destroy(err => {
-                        if (err) {
-                            return res.redirect("/dashboard");
-                        }
+                    // req.session.destroy(err => {
+                    //     if (err) {
+                    //         return res.redirect("/dashboard");
+                    //     }
 
-                        res.clearCookie(SESS_NAME);
-                        res.send("Ninja disposed!");
-                    })
+                    //     res.clearCookie(SESS_NAME);
+                    //     res.send("Ninja disposed!");
+                    // })
+                    res.send("Ninja disposed!");
                 });
             })
 
