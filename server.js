@@ -931,7 +931,7 @@ app.post('/disposal', redirectLogin, (req, res) => {
                     //     res.clearCookie(SESS_NAME);
                     //     res.send("Ninja disposed!");
                     // })
-                    res.send("Ninja disposed!");
+                    res.send(results);
                 });
             })
 
