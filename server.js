@@ -900,6 +900,7 @@ app.post('/logout', redirectLogin, (req, res) => {
 
 })
 
+
 app.post('/disposal', redirectLogin, async (req, res) => {
     const { user } = res.locals;
     const email = user.email_address;
@@ -916,18 +917,20 @@ app.post('/disposal', redirectLogin, async (req, res) => {
         console.log(cashResult);
         let tradesResult = await connection.query(tradesStmt);
         console.log(tradesResult);
+        let fName = user.first_name;
+        let capFname = fName.charAt(0).toUpperCase() + fName.substring(1);
         const goodbye = {
             from: EMAIL_ACCOUNT,
             to: `${email}`,
             subject: 'Ninja Disposed!',
             text:
-                `Kon'nichiwa ${user.first_name}, 
+                `Kon'nichiwa ${capFname}, 
             
-            We are sad to see you go, when you are ready to continue your journey to become the trade-fu master please register.
+                We are sad to see you go, when you are ready to continue your journey to become the trade-fu master please register.
 
-            Regards,
+                Regards,
             
-            Trade Ninja Support
+                Trade Ninja Support
             `
         };
 
