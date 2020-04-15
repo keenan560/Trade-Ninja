@@ -909,7 +909,7 @@ app.post('/disposal', redirectLogin, async (req, res) => {
 
     await connection.query("SET SQL_SAFE_UPDTES = 0");
 
-    await connection.query(userStmt, (err, results) => {
+    connection.query(userStmt, (err, results) => {
         if (err) throw err;
         console.log(results);
 
@@ -917,13 +917,11 @@ app.post('/disposal', redirectLogin, async (req, res) => {
             if (err) throw err;
             console.log(results);
 
-
             connection.query(cashStmt, (err, results) => {
                 if (err) throw err;
                 console.log(results);
 
             });
-
 
             connection.query(tradesStmt, (err, results) => {
                 if (err) throw err;
