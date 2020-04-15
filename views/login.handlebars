@@ -5,8 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
-        crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <link rel="stylesheet" href="./css/style.css">
     <title>Trade Ninja</title>
 </head>
@@ -33,121 +33,134 @@
                     </ul>
                 </div>
             </div>
-         
-        <nav class="navbar navbar-expand-lg text-white navbar-dark">
-            <a class="navbar-brand" href="/login">Trade Ninja</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggleExternalContent"
-                aria-controls="navbarToggleExternalContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav mr-auto">
-                    <li class="nav-item ">
-                        <a class="nav-link text-white" href='/about'>About</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white" href="/register">Sign Up</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white" href="/login">Login</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white" href="/contact">Contact Us</a>
-                    </li>
-                </ul>
-            </div>
-        </nav>
-        
-    </div>
 
-
-
-    <h1 class="my-5 mx-auto text-center">Login to begin</h1>
-
-
-    <div id='loginbox'class="container">
-        <form id="login">
-            <div class="form-group">
-                <label for='username'>Username</label>
-                <input type="text" class="form-control" id="username">
-            </div>
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" class="form-control" id="password">
-            </div>
-            <div class="containter">
-                <a class='reset float-left' href="./forget_username">Forgot Username?</a>
-                <a class='reset float-right' href="./forget_password">Password Reset</a>
-            </div>
-            <button style="width: 100%" id='submit' type="submit" class="btn btn-primary my-4">Ninja Log</button>
-        </form>
-
-        <div id="alert-space" class="text-center my-3">
+            <nav class="navbar navbar-expand-lg text-white navbar-dark">
+                <a class="navbar-brand" href="/login">Trade Ninja</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse"
+                    data-target="#navbarToggleExternalContent" aria-controls="navbarToggleExternalContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item ">
+                            <a class="nav-link text-white" href='/about'>About</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="/register">Sign Up</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="/login">Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="/contact">Contact Us</a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
 
         </div>
-    </div>
 
 
 
-    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
-        crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
-        crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
-        crossorigin="anonymous"></script>
-    <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.4.1.js" integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
-        crossorigin="anonymous"></script>
-
-    <script type='text/javascript'>
-
-        $("#submit").on("click", event => {
-            event.preventDefault();
-            let userName = $("#username").val();
-            let userPassword = $("#password").val();
+        <h1 class="my-5 mx-auto text-center">Login to begin</h1>
 
 
-            let data = {
-                username: userName,
-                password: userPassword
-            }
+        <div id='loginbox' class="container">
+            <form id="login">
+                <div class="form-group">
+                    <label for='username'>Username</label>
+                    <input type="text" class="form-control" id="username">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" class="form-control" id="password">
+                </div>
+                <div class="containter">
+                    <a class='reset float-left' href="./forget_username">Forgot Username?</a>
+                    <a class='reset float-right' href="./forget_password">Password Reset</a>
+                </div>
+                <button style="width: 100%" id='submit' type="submit" class="btn btn-primary my-4">Ninja Log</button>
+            </form>
+
+            <div id="alert-space" class="text-center my-3">
+
+            </div>
+        </div>
 
 
-            $.ajax({
-                type: "POST",
-                contentType: "application/json",
-                url: "https://trade-ninja-9505.nodechef.com/auth",
-                data: JSON.stringify(data)
 
-            }).then((results) => {
-                console.log(results)
+        <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+            integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+            crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+            integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+            crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+            integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+            crossorigin="anonymous"></script>
+        <!-- jQuery -->
+        <script src="https://code.jquery.com/jquery-3.4.1.js"
+            integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU=" crossorigin="anonymous"></script>
 
-                if (results === "Username does not exist") {
-                    $("#alert-space").html(`<div class="alert alert-transparent text-warning" role="alert">Please enter a valid username.</div>`);
-                    setTimeout(() => {
-                        $("#alert-space").empty();
-                    }, 3000);
+        <script type='text/javascript'>
+
+            $("#submit").on("click", event => {
+                event.preventDefault();
+                let userName = $("#username").val();
+                let userPassword = $("#password").val();
+
+
+                let data = {
+                    username: userName,
+                    password: userPassword
                 }
 
-                if (results === "Invalid credentials!") {
-                    $("#alert-space").html(`<div class="alert alert-transparent text-danger" role="alert">${results}</div>`);
-                    setTimeout(() => {
-                        $("#alert-space").empty();
-                    }, 3000);
-                }
 
-                if (results === "Login Successful!") {
-                    $("#submit").append(`<span class="spinner-border spinner-border-sm m-1" role="status" aria-hidden="true"></span>`)
-                    {{!-- $("#alert-space").html(`<div class="spinner-border text-danger" role="status"><span class="sr-only"></span></div>`) --}}
-                    setTimeout(() => {
-                        window.location = "/dashboard"
-                    }, 3000);
-                }
+                $.ajax({
+                    type: "POST",
+                    contentType: "application/json",
+                    url: "https://trade-ninja-9505.nodechef.com/auth",
+                    data: JSON.stringify(data)
 
+                }).then((results) => {
+                    console.log(results)
+
+                    if (results === "Username does not exist") {
+                        $("#login").addClass("animated shake");
+                        $("#alert-space").html(`<div class="alert alert-transparent text-warning" role="alert">Please enter a valid username.</div>`);
+                        setTimeout(() => {
+                            $("#alert-space").empty();
+                            $("#login").removeClass("animated shake")
+                        }, 3000);
+                    }
+
+                    if (results === "Invalid credentials!") {
+                        $("#login").addClass("animated shake");
+                        $("#alert-space").html(`<div class="alert alert-transparent text-danger" role="alert">${results}</div>`);
+                        setTimeout(() => {
+                            $("#login").removeClass("animated shake")
+                            $("#alert-space").empty();
+                        }, 3000);
+                    }
+
+                    if (results === "Login Successful!") {
+
+                        $("#submit").append(`<span class="spinner-border spinner-border-sm m-1" role="status" aria-hidden="true"></span>`)
+
+                        setTimeout(() => {
+                            $("body").addClass("animated fadeOutLeft");
+                            setTimeout(() => {
+                                window.location = "/dashboard";
+
+                            }, 1000)
+                        }, 1500);
+                    }
+
+                })
             })
-        })
 
-    </script>
+        </script>
 </body>
 
 </html>

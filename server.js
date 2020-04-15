@@ -43,7 +43,7 @@ const connection = mysql.createConnection({
 
 
 
-connection.connect();
+
 
 const IN_PROD = NODE_ENV === 'production';
 const app = express();
@@ -163,6 +163,7 @@ app.get("/forget_password", (req, res) => {
 })
 
 app.get("/portfolio", redirectLogin, (req, res) => {
+    
     const { user } = res.locals;
     let stmt = `select user_name, id, ticker, description, price_acquired, quantity, total, DATE(date_acquired) from holdings  WHERE user_name = '${user.user_name}'`;
     connection.query(stmt, (err, results) => {
@@ -197,10 +198,12 @@ app.get("/portfolio", redirectLogin, (req, res) => {
             results.forEach(order => portVal += order.total);
 
             res.render('portfolio', { title: "Holdings", userName: user.user_name, holdings: adjHoldings, portVal: formatNumber(portVal) });
+            
 
         })
 
     })
+   
 
 })
 function currentPrice(ticker) {
@@ -240,11 +243,13 @@ const analyze = (price1, price2) => {
 }
 
 app.get("/refresh", redirectLogin, (req, res) => {
+    
     const { user } = res.locals;
     connection.query(`SELECT * FROM holdings WHERE user_name = '${user.user_name}' AND quantity > 0`, async (err, results) => {
         if (err) {
             console.log(err);
             res.sendStatus(500);
+            
             return;
         }
 
@@ -271,9 +276,11 @@ app.get("/refresh", redirectLogin, (req, res) => {
                 array.push(updatedTicker);
             }
             res.json(array);
+            
         } catch (e) {
             console.log(e);
             res.sendStatus(500);
+            
         }
     });
 });
@@ -281,12 +288,14 @@ app.get("/refresh", redirectLogin, (req, res) => {
 
 
 app.get("/cash", redirectLogin, (req, res) => {
+    
     const { user } = res.locals;
     connection.query(`SELECT * FROM CASH WHERE user_name = '${user.user_name}'`, (err, results) => {
         if (err) throw err;
 
         if (results.length === 0) {
             res.render('cash', { title: 'Cash', userName: user.user_name, balance: '$0.00' });
+            
         }
 
         if (results.length > 0) {
@@ -295,6 +304,7 @@ app.get("/cash", redirectLogin, (req, res) => {
                 bal += trans.amount;
             })
             res.render('cash', { title: 'Cash', userName: user.user_name, balance: numFormat(bal) });
+            
 
         }
 
@@ -303,16 +313,19 @@ app.get("/cash", redirectLogin, (req, res) => {
 });
 
 app.get("/cash/users", redirectLogin, (req, res) => {
+    
     const { user } = res.locals;
     connection.query(`SELECT * FROM CASH WHERE user_name = '${user.user_name}'`, (err, results) => {
         if (err) throw err;
         res.send(results);
+        
     })
 
 });
 
 
 app.get("/history", redirectLogin, (req, res) => {
+    
     const { user } = res.locals;
     let stmt = `select user_name, id, trans_type,ticker, description, price, quantity, total, DATE(trade_date) from trades WHERE user_name = '${user.user_name}' ORDER BY trade_date DESC`;
     connection.query(stmt, (err, results) => {
@@ -340,26 +353,28 @@ app.get("/history", redirectLogin, (req, res) => {
         }
 
         res.render('history', { title: 'History', history: formattedResults, portVal: numFormat(portVal) });
+        
     })
 
 });
 
 app.get("/trade", redirectLogin, (req, res) => {
+    
     const { user } = res.locals;
     connection.query(`SELECT * FROM CASH WHERE user_name = '${user.user_name}'`, (err, results) => {
         if (err) throw err;
-        // console.log(results)
-
+        
         if (results.length === 0) {
             res.render('trade', { title: 'Trade', balance: '$0.00' });
+            
         }
-
 
         if (results.length > 0) {
             let currBal = 0;
             results.forEach(trans => currBal += trans.amount);
             console.log(currBal)
             res.render('trade', { title: 'Trade', balance: numFormat(currBal) });
+            
         }
 
     })
@@ -367,6 +382,7 @@ app.get("/trade", redirectLogin, (req, res) => {
 });
 
 app.get("/leaders", redirectLogin, (req, res) => {
+    
     const { user } = res.locals;
 
     connection.query(`select user_name, trans_type, count(trans_type) as count, sum(total) * -1 as trans_total from trades where trans_type = 'Buy' group by user_name order by count(trans_type) desc`, (err, buy_results) => {
@@ -426,6 +442,7 @@ app.get("/leaders", redirectLogin, (req, res) => {
 
 
                     res.render('leaders', { title: "Leaderboard", userName: user.user_name, buy_results: f_buy_results, sell_results: f_sell_results, ticker_buys: f_ticker_buys, ticker_sells: f_ticker_sells });
+                    
                 })
             })
 
@@ -442,6 +459,7 @@ app.get("/password_reset", (req, res) => {
 app.post("/change_password", async (req, res) => {
     const { username } = req.body;
     const { password1 } = req.body;
+    
 
     try {
         const salt = await bcrypt.genSalt(10);
@@ -451,23 +469,26 @@ app.post("/change_password", async (req, res) => {
             if (err) throw err;
             console.log(results);
 
-            res.send("Password changed successfully!")
+            res.send("Password changed successfully!");
+            
         })
     } catch {
         res.send('Password change failed!');
+        
     }
 
 })
 
 app.post("/forget_username", (req, res) => {
+    
     const { email } = req.body;
-    console.log(email)
     let stmt = `SELECT * FROM users WHERE email_address ='${email}'`;
     connection.query(stmt, (err, results) => {
         if (err) throw err;
         console.log(results);
         if (results.length === 0) {
             res.send('Email not found');
+            
         }
 
         if (results.length > 0) {
@@ -477,7 +498,7 @@ app.post("/forget_username", (req, res) => {
                 to: `${email}`,
                 subject: 'Username Recovery',
                 text:
-                    `Kon'nichiwa Ninja,
+                `Kon'nichiwa Ninja,
 
                  Please see your username below:
 
@@ -491,10 +512,12 @@ app.post("/forget_username", (req, res) => {
 
             transporter.sendMail(forgotUsername, (error, info) => {
                 if (error) {
-                    console.log(error)
+                    console.log(error);
+                    
                 } else {
                     console.log('Email sent' + info.response);
                     res.send('Email success!');
+                    connection.end()
                 }
             })
 
@@ -505,13 +528,14 @@ app.post("/forget_username", (req, res) => {
 
 app.post("/forget_password", (req, res) => {
     const { email } = req.body;
-    console.log(email);
+    
     let stmt = `SELECT * FROM users WHERE email_address ='${email}'`;
     connection.query(stmt, (err, results) => {
         if (err) throw err;
         console.log(results);
         if (results.length === 0) {
             res.send('Email not found');
+            
         }
 
         if (results.length > 0) {
@@ -521,16 +545,16 @@ app.post("/forget_password", (req, res) => {
                 to: `${email}`,
                 subject: 'Password Reset',
                 text:
-                    `Kon'nichiwa Ninja,
+                `Kon'nichiwa Ninja,
 
-                Please click the link below to reset your password.
+                 Please click the link below to reset your password.
                 
-                https://trade-ninja-9505.nodechef.com/password_reset
+                 https://trade-ninja-9505.nodechef.com/password_reset
                  
 
-                Regards,
+                 Regards,
 
-                Trade Ninja Support
+                 Trade Ninja Support
                 `
             };
 
@@ -540,6 +564,7 @@ app.post("/forget_password", (req, res) => {
                 } else {
                     console.log('Email sent' + info.response);
                     res.send('Email success!');
+                    
                 }
             })
 
@@ -551,7 +576,7 @@ app.post("/forget_password", (req, res) => {
 
 app.post("/users/holdings", redirectLogin, (req, res) => {
     const { user } = res.locals;
-    console.log(req.body.ticker)
+    
     connection.query(`SELECT quantity FROM holdings WHERE user_name = '${user.user_name}' and ticker ='${req.body.ticker}'`, (err, results) => {
         if (err) throw err;
         console.log(results.length);
@@ -559,8 +584,10 @@ app.post("/users/holdings", redirectLogin, (req, res) => {
 
         if (results.length === 0) {
             res.send("Not found!");
+            
         } else {
             res.send(results);
+            
         }
     })
 })
@@ -572,7 +599,6 @@ app.post("/users/email", [
     check("email", "Email address must be between 4-100 characters long").isLength({ min: 4, max: 100 })
 ], async (req, res) => {
     let email = req.body.email;
-    console.log(req.body.email);
     try {
         let errors = await validationResult(req);
         console.log(errors);
@@ -581,14 +607,17 @@ app.post("/users/email", [
             console.log(errors);
             return res.json({ errors: errors.array() });
         } else {
+            
             let stmt = `SELECT * FROM users WHERE email_address = '${email}'`;
             connection.query(stmt, (err, results) => {
                 if (err) throw err;
                 console.log(results)
                 if (results.length === 0) {
                     res.send("Okay to use.");
+                    
                 } else {
                     res.send("Cannot use this email.");
+                    
                 }
             })
         }
@@ -601,6 +630,7 @@ app.post("/users/email", [
 });
 
 app.post("/users/username", (req, res) => {
+    
     let userName = req.body.username;
     let stmt = `SELECT * FROM users WHERE user_name = '${userName}'`;
     connection.query(stmt, (err, results) => {
@@ -608,8 +638,10 @@ app.post("/users/username", (req, res) => {
 
         if (results.length !== 0) {
             res.send("Username exists!");
+            
         } else {
             res.send("Okay to use!");
+            
         }
     })
 });
@@ -618,20 +650,23 @@ app.post("/users/username", (req, res) => {
 app.post("/users", redirectHome, async (req, res) => {
     const { user } = res.locals;
     try {
+        
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(req.body.password, salt);
         let stmt = `INSERT INTO users (first_name, last_name, email_address, user_name, password) VALUES (?)`
         let values = [req.body.firstName, req.body.lastName, req.body.emailAddress, req.body.userName, hashedPassword]
         connection.query(stmt, [values], (err, results) => {
             if (err) {
+                
                 return console.error(err.message);
+                
             }
             const welcomeMessage = {
                 from: EMAIL_ACCOUNT,
                 to: `${req.body.emailAddress}`,
                 subject: 'Welcome to Trade Ninja!',
                 text:
-                    `Kon'nichiwa ${req.body.firstName},
+                   `Kon'nichiwa ${req.body.firstName},
 
                     Thank you for creating your free account with Trade Ninja! We are excited that you have chosen to
                     begin your journey to be the trade ninja master.
@@ -644,29 +679,34 @@ app.post("/users", redirectHome, async (req, res) => {
 
             transporter.sendMail(welcomeMessage, (error, info) => {
                 if (error) {
-                    console.log(error)
+                    console.log(error);
+                    
                 } else {
                     console.log('Email sent' + info.response);
                 }
             })
             res.send("Ninja add successful!");
+            
 
 
         });
     } catch {
         res.send("Ninja add fail!");
+        
     }
 
 
 });
 
 app.post("/auth", async (req, res) => {
-
+    
     connection.query(`SELECT * FROM users WHERE user_name = '${req.body.username}'`, async (err, results) => {
         if (err) throw err;
 
         if (results.length === 0) {
+            
             return res.send('Username does not exist');
+           
         }
 
         if (results.length > 0) {
@@ -674,14 +714,17 @@ app.post("/auth", async (req, res) => {
                 if (await bcrypt.compare(req.body.password, results[0].password)) {
                     req.session.user = results[0];
                     console.log(req.session.user.user_name);
-                    res.send("Login Successful!")
+                    res.send("Login Successful!");
+                    
                 } else {
 
                     res.send("Invalid credentials!");
+                    
                 }
             }
             catch {
                 res.sendStatus(500);
+                
             }
         }
 
@@ -695,10 +738,9 @@ app.post("/auth", async (req, res) => {
 
 app.post('/cash', (req, res) => {
     const { user } = res.locals;
-    console.log(req.body)
     let stmt = `INSERT INTO CASH (user_name, trans_type, amount, account) VALUES (?)`;
     let values = [user.user_name, req.body.transType, req.body.amount, req.body.account];
-
+    
     connection.query(stmt, [values], (err, results) => {
         if (err) throw err;
         console.log(results);
@@ -711,6 +753,7 @@ app.post('/cash', (req, res) => {
                     bal += trans.amount;
                 })
                 res.render('cash', { title: 'Cash', userName: user.user_name, balance: numFormat(bal) });
+                
 
             }
 
@@ -724,11 +767,12 @@ app.post('/trades', redirectLogin, (req, res) => {
     console.log(req.body);
     let stmt = 'INSERT INTO trades (user_name, trans_type, ticker, description, price, quantity, total) VALUES (?)';
     let values = [user.user_name, req.body.transType, req.body.ticker, req.body.desc, req.body.price, req.body.quantity, req.body.total];
-
+    
     connection.query(stmt, [values], (err, results) => {
         if (err) throw err;
         console.log(results);
         res.sendStatus(200);
+        
     });
 });
 
@@ -737,7 +781,7 @@ app.post('/trades/cash', (req, res) => {
     console.log(req.body)
     let stmt = `INSERT INTO CASH (user_name, trans_type, amount) VALUES (?)`;
     let values = [user.user_name, req.body.transType, req.body.amount];
-
+    
     connection.query(stmt, [values], (err, results) => {
         if (err) throw err;
         console.log(results);
@@ -750,6 +794,7 @@ app.post('/trades/cash', (req, res) => {
                     bal += trans.amount;
                 })
                 res.render('cash', { title: 'Cash', userName: user.user_name, balance: numFormat(bal) });
+                
 
             }
 
@@ -760,7 +805,7 @@ app.post('/trades/cash', (req, res) => {
 
 app.post('/holdings', redirectLogin, (req, res) => {
     const { user } = res.locals;
-
+    
     connection.query(`SELECT * FROM holdings WHERE user_name ='${user.user_name}' AND ticker = '${req.body.ticker}'`, (err, results) => {
         if (err) throw err;
 
@@ -770,12 +815,14 @@ app.post('/holdings', redirectLogin, (req, res) => {
             connection.query(stmt, [values], (err, results) => {
                 if (err) throw err;
                 console.log(results);
+                
             });
         } else {
             let stmt = `UPDATE holdings SET quantity = quantity + ${req.body.quantity} WHERE user_name = '${user.user_name}' AND ticker ='${req.body.ticker}'`;
             connection.query(stmt, (err, res) => {
                 if (err) throw err;
                 console.log(results);
+                
             });
         }
     });
@@ -785,8 +832,8 @@ app.post('/holdings', redirectLogin, (req, res) => {
 
 app.post('/sell', redirectLogin, (req, res) => {
     const { user } = res.locals;
-
     let stmt = `UPDATE holdings SET quantity = quantity - ${req.body.quantity} WHERE user_name = '${user.user_name}' AND ticker ='${req.body.ticker}'`;
+    
     connection.query(stmt, (err, results) => {
         if (err) throw err;
         console.log(results);
@@ -795,6 +842,7 @@ app.post('/sell', redirectLogin, (req, res) => {
             if (err) throw err;
             console.log(results);
             res.send('Your holdings were adjsuted!');
+            
         })
 
     });
@@ -804,10 +852,9 @@ app.post('/sell', redirectLogin, (req, res) => {
 
 app.post('/sell/cash', (req, res) => {
     const { user } = res.locals;
-    console.log(req.body)
     let stmt = `INSERT INTO CASH (user_name, trans_type, amount) VALUES (?)`;
     let values = [user.user_name, req.body.transType, req.body.amount];
-
+    
     connection.query(stmt, [values], (err, results) => {
         if (err) throw err;
         console.log(results);
@@ -820,6 +867,7 @@ app.post('/sell/cash', (req, res) => {
                     bal += trans.amount;
                 })
                 res.render('cash', { title: 'Cash', userName: user.user_name, balance: numFormat(bal) });
+                
 
             }
 
@@ -831,10 +879,12 @@ app.post('/sell/cash', (req, res) => {
 
 app.post('/portval', redirectLogin, (req, res) => {
     const { user } = res.locals;
+    
     connection.query(`SELECT * FROM holdings WHERE user_name = '${user.user_name}' AND quantity > 0`, (err, results) => {
         if (err) throw err;
         console.log(results);
         res.send(results);
+        
     })
 })
 
@@ -849,9 +899,94 @@ app.post('/logout', redirectLogin, (req, res) => {
     })
     
 })
+// connection.connect();
+// function handleDisconnect(connection) {
+//     connection.on('error', function (err) {
+//         if (!err.fatal) {
+//             return;
+//         }
 
+//         if (err.code !== 'PROTOCOL_CONNECTION_LOST') {
+//             throw err;
+//         }
+
+//         console.log('Re-connecting lost connection: ' + err.stack);
+
+//         connection = mysql.createConnection(connection.config);
+//         handleDisconnect(connection);
+//         connection.connect();
+//     });
+// }
+
+// handleDisconnect(connection);
+
+connection.connect(function (err) {
+    if (err) {
+        // mysqlErrorHandling(connection, err);
+        console.log("\n\t *** Cannot establish a connection with the database. ***");
+
+        connection = reconnect(connection);
+    } else {
+        console.log("\n\t *** New connection established with the database. ***")
+    }
+});
+
+//- Reconnection function
+function reconnect(connection) {
+    console.log("\n New connection tentative...");
+
+    //- Destroy the current connection variable
+    if (connection) connection.destroy();
+
+    //- Create a new one
+    var connection = mysql_npm.createConnection(db_config);
+
+    //- Try to reconnect
+    connection.connect(function (err) {
+        if (err) {
+            //- Try to connect every 2 seconds.
+            setTimeout(reconnect, 2000);
+        } else {
+            console.log("\n\t *** New connection established with the database. ***")
+            return connection;
+        }
+    });
+}
+
+//- Error listener
+connection.on('error', function (err) {
+
+    //- The server close the connection.
+    if (err.code === "PROTOCOL_CONNECTION_LOST") {
+        console.log("/!\\ Cannot establish a connection with the database. /!\\ (" + err.code + ")");
+        connection = reconnect(connection);
+    }
+
+    //- Connection in closing
+    else if (err.code === "PROTOCOL_ENQUEUE_AFTER_QUIT") {
+        console.log("/!\\ Cannot establish a connection with the database. /!\\ (" + err.code + ")");
+        connection = reconnect(connection);
+    }
+
+    //- Fatal error : connection variable must be recreated
+    else if (err.code === "PROTOCOL_ENQUEUE_AFTER_FATAL_ERROR") {
+        console.log("/!\\ Cannot establish a connection with the database. /!\\ (" + err.code + ")");
+        connection = reconnect(connection);
+    }
+
+    //- Error because a connection is already being established
+    else if (err.code === "PROTOCOL_ENQUEUE_HANDSHAKE_TWICE") {
+        console.log("/!\\ Cannot establish a connection with the database. /!\\ (" + err.code + ")");
+    }
+
+    //- Anything else
+    else {
+        console.log("/!\\ Cannot establish a connection with the database. /!\\ (" + err.code + ")");
+        connection = reconnect(connection);
+    }
+
+});
 
 
 app.listen(PORT, console.log(`Listening on http://localhost:${PORT}`));
-
 
