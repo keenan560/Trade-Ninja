@@ -944,19 +944,21 @@ app.post('/disposal', redirectLogin, async (req, res) => {
 
             }
         })
+
+        req.session.destroy(err => {
+            if (err) {
+                return res.redirect("/dashboard");
+            }
+            res.clearCookie(SESS_NAME);
+            res.send("Ninja disposed!");
+        })
     } catch (error) {
         throw error
     }
 
 
 
-    req.session.destroy(err => {
-        if (err) {
-            return res.redirect("/dashboard");
-        }
-        res.clearCookie(SESS_NAME);
-        res.send("Ninja disposed!");
-    })
+
 });
 
 connection.connect(function (err) {
