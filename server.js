@@ -978,7 +978,14 @@ function reconnect(connection) {
     if (connection) connection.destroy();
 
     //- Create a new one
-    var connection = mysql_npm.createConnection(db_config);
+    var connection = mysql.createConnection({
+        host: HOST,
+        port: DB_PORT,
+        user: DB_USER,
+        password: DB_PASSWORD,
+        database: DB,
+        dateStrings: true
+    });
 
     //- Try to reconnect
     connection.connect(function (err) {
