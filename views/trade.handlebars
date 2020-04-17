@@ -11,10 +11,11 @@
 <body>
 
     <div class="container mx-auto">
-        <a href="/dashboard"><button style='width: 150px; height:20%' class="btn mx-2 my-1 btn-transparent text-center dash-button">Dashboard</button></a>
+        <a href="/dashboard"><button style='width: 150px; height:20%'
+                class="btn mx-2 my-1 btn-transparent text-center dash-button">Dashboard</button></a>
 
         <div class="container my-5 " id='welcome'>
-            
+
             <h1 class="text-center"> Place an order</h1>
             <p class='text-right text-success' id='balance'>Cash Available: {{balance}}</p>
             <form id='trade-form' class='my-3'>
@@ -43,7 +44,8 @@
 
                 </div>
                 <div class="containter text-center">
-                    <button style='width:100%' id="order" type="submit" class="btn btn-primary btn-lg text-center my-4">Ninja
+                    <button style='width:100%' id="order" type="submit"
+                        class="btn btn-primary btn-lg text-center my-4">Ninja
                         Trade!</button>
                 </div>
 
@@ -63,16 +65,19 @@
 
 
     <!-- Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+        integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
         crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
         crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+        integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
         crossorigin="anonymous"></script>
 
     <!-- jquery -->
-    <script src="https://code.jquery.com/jquery-3.4.1.js" integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
-        crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.js"
+        integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU=" crossorigin="anonymous"></script>
 </body>
 
 <script type='text/javascript'>
@@ -275,14 +280,15 @@
     })
 
     $("#ticker").change((event) => {
+        $("#current").empty();
+        $("#current").append(`<div class="spinner-border text-danger" role="status"></div>`)
+
         let userTicker = event.target.value;
         let tickReq = {
             ticker: userTicker
         }
         const apiURL = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${userTicker}&apikey=${apikey}`;
         let keyURL = `https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=${userTicker}&apikey=${apikey}`;
-
-        $("#current").empty();
 
         $.ajax({
             type: "POST",
@@ -291,6 +297,7 @@
             data: JSON.stringify(tickReq)
         }).then(results => {
             console.log(results)
+            $("#current").empty();
             if (results === 'Not found!') {
                 isInPort = false;
                 $("#current").append(`<p class ='my-2 text-primary'>You currently own 0 shares of ${userTicker}</p>`)
