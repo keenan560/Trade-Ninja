@@ -32,7 +32,7 @@ const {
 } = process.env
 
 const mysql = require('mysql');
-const connection = mysql.createConnection({
+let connection = mysql.createConnection({
     host: HOST,
     port: DB_PORT,
     user: DB_USER,
