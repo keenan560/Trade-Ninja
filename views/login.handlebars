@@ -147,7 +147,7 @@
                     if (results === "Login Successful!") {
 
                         $("#submit").append(`<span class="spinner-border spinner-border-sm m-1" role="status" aria-hidden="true"></span>`)
-
+                        $("#submit").style.backgroundColor = "green";
                         setTimeout(() => {
                             $("body").addClass("animated fadeOutLeft");
                             setTimeout(() => {
