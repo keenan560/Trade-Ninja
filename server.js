@@ -459,6 +459,7 @@ app.get("/password_reset", (req, res) => {
 app.post("/change_password", async (req, res) => {
     const { username } = req.body;
     const { password1 } = req.body;
+    const { }
 
 
     try {
@@ -525,8 +526,15 @@ app.post("/forget_username", (req, res) => {
         }
     })
 })
+const pinGen = length => {
+    let pin = "";
+    for (let i = 0; i < length; i++) {
+        pin += Math.round(Math.random * 10);
+    }
+    return pin;
+}
 
-app.post("/forget_password", (req, res) => {
+app.post("/forget_password", async (req, res) => {
     const { email } = req.body;
 
     let stmt = `SELECT * FROM users WHERE email_address ='${email}'`;
@@ -539,34 +547,46 @@ app.post("/forget_password", (req, res) => {
         }
 
         if (results.length > 0) {
+            let pin = await pinGen(4);
+            let stmt = `INSERT INTO pins (email_address, pin) VALUES (?)`;
+            let values = [`${email}`, pin];
+            connection.query(stmt, values, (err, results) => {
+                if (err) throw err;
+                console.log(results);
+                try {
+                    const forgotPassword = {
+                        from: EMAIL_ACCOUNT,
+                        to: `${email}`,
+                        subject: 'Password Reset',
+                        text:
+                            `Kon'nichiwa Ninja,
 
-            const forgotPassword = {
-                from: EMAIL_ACCOUNT,
-                to: `${email}`,
-                subject: 'Password Reset',
-                text:
-                    `Kon'nichiwa Ninja,
+                 Please click the link below to reset your password. Use the PIN below for authentication.
 
-                 Please click the link below to reset your password.
-                
+                 PIN: ${pin}
                  https://trade-ninja-9505.nodechef.com/password_reset
-                 
+                
 
                  Regards,
 
                  Trade Ninja Support
                 `
-            };
+                    };
 
-            transporter.sendMail(forgotPassword, (error, info) => {
-                if (error) {
-                    console.log(error)
-                } else {
-                    console.log('Email sent' + info.response);
-                    res.send('Email success!');
+                    transporter.sendMail(forgotPassword, (error, info) => {
+                        if (error) {
+                            console.log(error)
+                        } else {
+                            console.log('Email sent' + info.response);
+                            res.send('Email success!');
 
+                        }
+                    })
+
+                } catch {
+                    res.sendStatus(500);
                 }
-            })
+            });
 
 
         }

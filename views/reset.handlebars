@@ -46,6 +46,10 @@
                 <input type="text" class="form-control" id="username">
             </div>
             <div class="form-group">
+                <label for='pin'>Enter PIN</label>
+                <input type="text" class="form-control" id="pin">
+            </div>
+            <div class="form-group">
                 <label for='password1'>New password</label>
                 <input type="password" class="form-control" id="password1">
             </div>
@@ -81,13 +85,16 @@
 
         $("#submit").on("click", event => {
             event.preventDefault();
-            let username = $("#username").val();
-            let password1 = $("#password1").val();
-            let password2 = $("#password2").val();
+            let username = $("#username").val().trim();
+            let pin = $("#pin").val().trim();
+            let password1 = $("#password1").val().trim();
+            let password2 = $("#password2").val().trim();
 
             let data = {
                 username: username,
-                password1: password1
+                pin: pin,
+                password1: password1,
+                password2: password2
             }
 
 
