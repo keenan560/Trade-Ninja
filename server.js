@@ -943,6 +943,8 @@ app.post('/disposal', redirectLogin, async (req, res) => {
         console.log(cashResult);
         let tradesResult = await connection.query(tradesStmt);
         console.log(tradesResult);
+        let pinResult = await connection.query(pinStmt);
+        console.log(pinResult);
         let fName = user.first_name;
         let capFname = fName.charAt(0).toUpperCase() + fName.substring(1);
         const goodbye = {
