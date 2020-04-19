@@ -932,7 +932,7 @@ app.post('/disposal', redirectLogin, async (req, res) => {
     cashStmt = `DELETE FROM CASH WHERE user_name ='${user.user_name}'`;
     tradesStmt = `DELETE FROM trades WHERE user_name ='${user.user_name}'`;
     holdingsStmt = `DELETE FROM holdings WHERE user_name ='${user.user_name}'`;
-    pinStmt = `DELETE FROM pins WHERE user_name ='${user.email_address}'`;
+    pinStmt = `DELETE FROM pins WHERE user_name ='${user.email_address.toLowerCase()}'`;
 
     try {
         let results = await connection.query(userStmt);
