@@ -457,11 +457,14 @@ app.get("/password_reset", (req, res) => {
 
 
 app.post("/change_password", async (req, res) => {
+    
     const { username } = req.body;
     const { password1 } = req.body;
-    const {passowrd2} = req.body;
-    const {pin} = req.body;
+    const { passowrd2 } = req.body;
+    const { pin } = req.body;
 
+    let stmt = ``
+    connection.query()
 
     try {
         const salt = await bcrypt.genSalt(10);
@@ -538,8 +541,8 @@ const pinGen = length => {
 app.post("/forget_password", (req, res) => {
     const { email } = req.body;
 
-    let stmt = `SELECT * FROM users WHERE email_address ='${email}'`;
-     connection.query(stmt, async (err, results) => {
+    let stmt = `SELECT * FROM users WHERE email_address ='${email.toLowerCase()}'`;
+    connection.query(stmt, async (err, results) => {
         if (err) throw err;
         console.log(results);
         if (results.length === 0) {
@@ -675,7 +678,7 @@ app.post("/users", redirectHome, async (req, res) => {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(req.body.password, salt);
         let stmt = `INSERT INTO users (first_name, last_name, email_address, user_name, password) VALUES (?)`
-        let values = [req.body.firstName, req.body.lastName, req.body.emailAddress, req.body.userName, hashedPassword]
+        let values = [req.body.firstName, req.body.lastName, req.body.emailAddress.toLowerCase(), req.body.userName, hashedPassword]
         connection.query(stmt, [values], (err, results) => {
             if (err) {
 
@@ -929,6 +932,8 @@ app.post('/disposal', redirectLogin, async (req, res) => {
     cashStmt = `DELETE FROM CASH WHERE user_name ='${user.user_name}'`;
     tradesStmt = `DELETE FROM trades WHERE user_name ='${user.user_name}'`;
     holdingsStmt = `DELETE FROM holdings WHERE user_name ='${user.user_name}'`;
+    pinStmt = `DELETE FROM pins WHERE user_name ='${user.email_address}'`;
+
     try {
         let results = await connection.query(userStmt);
         console.log(results);
