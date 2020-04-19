@@ -530,7 +530,7 @@ app.post("/forget_username", (req, res) => {
 const pinGen = length => {
     let pin = "";
     for (let i = 0; i < length; i++) {
-        pin += Math.round(Math.random * 10);
+        pin += Math.round(Math.random * 10).toString();
     }
     return pin;
 }
@@ -549,7 +549,7 @@ app.post("/forget_password", (req, res) => {
 
         if (results.length > 0) {
             let pin = await pinGen(4);
-            let stmt = `INSERT INTO pins (email_address, pin) VALUES (${email}, ${pin})`;
+            let stmt = `INSERT INTO pins (email_address, pin) VALUES ('${email}', ${pin})`;
             connection.query(stmt, (err, results) => {
                 if (err) throw err;
                 console.log(results);
