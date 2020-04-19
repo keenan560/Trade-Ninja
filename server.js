@@ -459,7 +459,8 @@ app.get("/password_reset", (req, res) => {
 app.post("/change_password", async (req, res) => {
     const { username } = req.body;
     const { password1 } = req.body;
-    const { }
+    const {passowrd2} = req.body;
+    const {pin} = req.body;
 
 
     try {
