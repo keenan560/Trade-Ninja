@@ -724,7 +724,7 @@ app.post("/users", redirectHome, async (req, res) => {
 
 app.post("/auth", async (req, res) => {
 
-    connection.query(`SELECT * FROM users WHERE user_name = '${req.body.username}'`, async (err, results) => {
+    connection.query(`SELECT * FROM users WHERE user_name = '${req.body.username}'`, (err, results) => {
         if (err) throw err;
 
         if (results.length === 0) {
