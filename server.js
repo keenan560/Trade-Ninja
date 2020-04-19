@@ -535,11 +535,11 @@ const pinGen = length => {
     return pin;
 }
 
-app.post("/forget_password", async (req, res) => {
+app.post("/forget_password", (req, res) => {
     const { email } = req.body;
 
     let stmt = `SELECT * FROM users WHERE email_address ='${email}'`;
-    connection.query(stmt, (err, results) => {
+     connection.query(stmt, async (err, results) => {
         if (err) throw err;
         console.log(results);
         if (results.length === 0) {
