@@ -929,15 +929,17 @@ app.post('/logout', redirectLogin, (req, res) => {
 
 
 app.post('/disposal', redirectLogin, async (req, res) => {
-    const { user } = res.locals;
-    const email = user.email_address;
-    const userStmt = `DELETE FROM users WHERE user_name ='${user.user_name}'`;
-    const cashStmt = `DELETE FROM CASH WHERE user_name ='${user.user_name}'`;
-    const tradesStmt = `DELETE FROM trades WHERE user_name ='${user.user_name}'`;
-    const holdingsStmt = `DELETE FROM holdings WHERE user_name ='${user.user_name}'`;
-    const pinStmt = `DELETE FROM pins WHERE user_name ='${user.email_address.toLowerCase()}'`;
 
     try {
+
+        const { user } = res.locals;
+        const email = user.email_address;
+        const userStmt = `DELETE FROM users WHERE user_name ='${user.user_name}'`;
+        const cashStmt = `DELETE FROM CASH WHERE user_name ='${user.user_name}'`;
+        const tradesStmt = `DELETE FROM trades WHERE user_name ='${user.user_name}'`;
+        const holdingsStmt = `DELETE FROM holdings WHERE user_name ='${user.user_name}'`;
+        const pinStmt = `DELETE FROM pins WHERE user_name ='${user.email_address.toLowerCase()}'`;
+
         let results = await connection.query(userStmt);
         console.log(results);
         let holdinResult = await connection.query(holdingsStmt);
@@ -984,9 +986,7 @@ app.post('/disposal', redirectLogin, async (req, res) => {
             res.send("Ninja disposed!");
         })
     } catch (err) {
-        console.log(err);
-        res.sendStatus(500);
-        throw err;
+        next(err);
         
     }
 
