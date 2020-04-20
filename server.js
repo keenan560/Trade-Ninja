@@ -38,6 +38,7 @@ var connection = mysql.createConnection({
     user: DB_USER,
     password: DB_PASSWORD,
     database: DB,
+    connectTimeout: 0,
     dateStrings: true
 });
 
