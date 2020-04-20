@@ -746,9 +746,11 @@ app.post("/auth", async (req, res) => {
                     res.send("Invalid credentials!");
 
                 }
-            }
-            catch {
+            } catch (err) {
+                console.log(err);
                 res.sendStatus(500);
+                throw err;
+                
 
             }
         }
@@ -929,11 +931,11 @@ app.post('/logout', redirectLogin, (req, res) => {
 app.post('/disposal', redirectLogin, async (req, res) => {
     const { user } = res.locals;
     const email = user.email_address;
-    userStmt = `DELETE FROM users WHERE user_name ='${user.user_name}'`;
-    cashStmt = `DELETE FROM CASH WHERE user_name ='${user.user_name}'`;
-    tradesStmt = `DELETE FROM trades WHERE user_name ='${user.user_name}'`;
-    holdingsStmt = `DELETE FROM holdings WHERE user_name ='${user.user_name}'`;
-    pinStmt = `DELETE FROM pins WHERE user_name ='${user.email_address.toLowerCase()}'`;
+    const userStmt = `DELETE FROM users WHERE user_name ='${user.user_name}'`;
+    const cashStmt = `DELETE FROM CASH WHERE user_name ='${user.user_name}'`;
+    const tradesStmt = `DELETE FROM trades WHERE user_name ='${user.user_name}'`;
+    const holdingsStmt = `DELETE FROM holdings WHERE user_name ='${user.user_name}'`;
+    const pinStmt = `DELETE FROM pins WHERE user_name ='${user.email_address.toLowerCase()}'`;
 
     try {
         let results = await connection.query(userStmt);
@@ -981,8 +983,11 @@ app.post('/disposal', redirectLogin, async (req, res) => {
             res.clearCookie(SESS_NAME);
             res.send("Ninja disposed!");
         })
-    } catch (error) {
-        throw error
+    } catch (err) {
+        console.log(err);
+        res.sendStatus(500);
+        throw err;
+        
     }
 
 
