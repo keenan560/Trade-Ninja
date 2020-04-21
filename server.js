@@ -978,14 +978,14 @@ app.post('/disposal', redirectLogin, async (req, res) => {
             }
         })
 
-        req.session.destroy(err => {
-            if (err) {
-                return res.redirect("/dashboard");
-            }
-            res.clearCookie(SESS_NAME);
-            res.send("Ninja disposed!");
-        })
-
+        // req.session.destroy(err => {
+        //     if (err) {
+        //         return res.redirect("/dashboard");
+        //     }
+        //     res.clearCookie(SESS_NAME);
+       
+        // })
+        res.send("Ninja disposed!");
 
     } catch (err) {
         next(err);
@@ -993,7 +993,7 @@ app.post('/disposal', redirectLogin, async (req, res) => {
     }
 
 
-    reconnect(connection);
+    // reconnect(connection);
 
 });
 
