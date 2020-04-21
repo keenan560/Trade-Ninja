@@ -38,6 +38,7 @@ var connection = mysql.createConnection({
     user: DB_USER,
     password: DB_PASSWORD,
     database: DB,
+    waitTimeout: 31536000,
     connectTimeout: 0,
     dateStrings: true
 });
@@ -1020,6 +1021,8 @@ function reconnect(connection) {
         user: DB_USER,
         password: DB_PASSWORD,
         database: DB,
+        waitTimeout: 31536000,
+        connectTimeout: 0,
         dateStrings: true
     });
 
