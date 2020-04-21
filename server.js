@@ -938,18 +938,18 @@ app.post('/disposal', redirectLogin, async (req, res) => {
         const cashStmt = `DELETE FROM CASH WHERE user_name ='${user.user_name}'`;
         const tradesStmt = `DELETE FROM trades WHERE user_name ='${user.user_name}'`;
         const holdingsStmt = `DELETE FROM holdings WHERE user_name ='${user.user_name}'`;
-        const pinStmt = `DELETE FROM pins WHERE user_name ='${user.email_address}'`;
+        const pinStmt = `DELETE FROM pins WHERE email_address ='${user.email_address}'`;
 
         let results = await connection.query(userStmt);
-        console.log(results);
+        // console.log(results);
         let holdinResult = await connection.query(holdingsStmt);
-        console.log(holdinResult);
+        // console.log(holdinResult);
         let cashResult = await connection.query(cashStmt);
-        console.log(cashResult);
+        // console.log(cashResult);
         let tradesResult = await connection.query(tradesStmt);
-        console.log(tradesResult);
+        // console.log(tradesResult);
         let pinResult = await connection.query(pinStmt);
-        console.log(pinResult);
+        // console.log(pinResult);
         let fName = user.first_name;
         let capFname = fName.charAt(0).toUpperCase() + fName.substring(1);
         const goodbye = {
@@ -978,22 +978,20 @@ app.post('/disposal', redirectLogin, async (req, res) => {
             }
         })
 
-        // req.session.destroy(err => {
-        //     if (err) {
-        //         return res.redirect("/dashboard");
-        //     }
-        //     res.clearCookie(SESS_NAME);
-       
-        // })
-        res.send("Ninja disposed!");
+        req.session.destroy(err => {
+            if (err) {
+                return res.redirect("/dashboard");
+            }
+            res.clearCookie(SESS_NAME);
+            res.send("Ninja disposed!");
+        })
+
 
     } catch (err) {
         next(err);
         
     }
 
-
-    // reconnect(connection);
 
 });
 
