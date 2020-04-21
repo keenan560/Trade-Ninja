@@ -985,13 +985,15 @@ app.post('/disposal', redirectLogin, async (req, res) => {
             res.clearCookie(SESS_NAME);
             res.send("Ninja disposed!");
         })
+
+
     } catch (err) {
         next(err);
         
     }
 
 
-
+    reconnect(connection);
 
 });
 
