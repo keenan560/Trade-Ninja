@@ -38,7 +38,6 @@ var connection = mysql.createConnection({
     user: DB_USER,
     password: DB_PASSWORD,
     database: DB,
-    waitTimeout: 31536000,
     connectTimeout: 0,
     dateStrings: true
 });
@@ -996,6 +995,8 @@ app.post('/disposal', redirectLogin, async (req, res) => {
 
 });
 
+
+
 connection.connect(function (err) {
     if (err) {
         // mysqlErrorHandling(connection, err);
@@ -1006,6 +1007,8 @@ connection.connect(function (err) {
         console.log("\n\t *** New connection established with the database. ***")
     }
 });
+
+
 
 //- Reconnection function
 function reconnect(connection) {
@@ -1021,7 +1024,6 @@ function reconnect(connection) {
         user: DB_USER,
         password: DB_PASSWORD,
         database: DB,
-        waitTimeout: 31536000,
         connectTimeout: 0,
         dateStrings: true
     });
@@ -1072,6 +1074,13 @@ connection.on('error', function (err) {
 
 });
 
+
+setInterval(() => {
+    connection.query(`SELECT 1 + 1`, (err, results) => {
+        if (err) throw err;
+        console.log(`Keeping the connection to DB constant ${results}`)
+    })
+},5000)
 
 app.listen(PORT, console.log(`Listening on http://localhost:${PORT}`));
 
