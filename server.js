@@ -461,10 +461,10 @@ app.post("/change_password", async (req, res) => {
 
     const { username } = req.body;
     const { password1 } = req.body;
-    const { passowrd2 } = req.body;
+    const { password2 } = req.body;
     const { pin } = req.body;
 
-    if (password1 !== passowrd2) {
+    if (password1 !== password2) {
         return res.send('Passwords do not match!');
     };
 
