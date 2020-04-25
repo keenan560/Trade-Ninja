@@ -1078,7 +1078,7 @@ connection.on('error', function (err) {
 setInterval(() => {
     connection.query(`SELECT 1 + 1`, (err, results) => {
         if (err) throw err;
-        console.log(`Keeping the connection to DB constant ${results}`)
+        console.log(`Keeping the connection to DB constant ${results[0]}`)
     })
 },5000)
 
