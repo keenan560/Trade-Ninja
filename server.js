@@ -468,6 +468,10 @@ app.post("/change_password", async (req, res) => {
         return res.send('Passwords do not match!');
     };
 
+    if (password1.length < 1 || password2.length < 1) {
+        return res.send('Password cannot be blank!');
+    }
+
     let stmt = `SELECT * FROM pins WHERE user_name='${username}'`;
     connection.query(stmt, async (err, results) => {
         if (err) throw err;
