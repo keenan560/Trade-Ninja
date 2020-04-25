@@ -469,7 +469,7 @@ app.post("/change_password", async (req, res) => {
     };
 
     let stmt = `SELECT * FROM pins WHERE user_name='${username}'`;
-    connection.query(stmt, (err, results) => {
+    connection.query(stmt, async (err, results) => {
         if (err) throw err;
 
         if (results.length === 0) {
