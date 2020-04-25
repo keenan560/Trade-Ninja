@@ -1080,7 +1080,7 @@ setInterval(() => {
         if (err) throw err;
         console.log(`Keeping the connection to DB constant ${results[0]}`)
     })
-},5000)
+},28800000);
 
 app.listen(PORT, console.log(`Listening on http://localhost:${PORT}`));
 
