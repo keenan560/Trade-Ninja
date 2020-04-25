@@ -115,6 +115,28 @@
                 }
 
 
+                if (results === 'Invalid pin!') {
+                    $("#alert-space").html(`<div class="alert alert-transparent text-warning" role="alert">${results}</div>`);
+                    setTimeout(() => {
+                        $("#alert-space").empty();
+                    }, 3000);
+                }
+
+
+                if (results === "Not a valid username") {
+                    $("#alert-space").html(`<div class="alert alert-transparent text-warning" role="alert">${results}</div>`);
+                    setTimeout(() => {
+                        $("#alert-space").empty();
+                    }, 3000);
+                }
+
+                if (results === 'Passwords do not match!') {
+                    $("#alert-space").html(`<div class="alert alert-transparent text-warning" role="alert">${results}</div>`);
+                    setTimeout(() => {
+                        $("#alert-space").empty();
+                    }, 3000);
+                }
+
 
                 if (results === "Password changed successfully!") {
 

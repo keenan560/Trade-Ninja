@@ -458,30 +458,50 @@ app.get("/password_reset", (req, res) => {
 
 
 app.post("/change_password", async (req, res) => {
-    
+
     const { username } = req.body;
     const { password1 } = req.body;
     const { passowrd2 } = req.body;
     const { pin } = req.body;
 
-    let stmt = ``
-    connection.query()
+    if (password1 !== passowrd2) {
+        return res.send('Passwords do not match!');
+    };
 
-    try {
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(password1, salt);
-        let stmt = `UPDATE users SET password = '${hashedPassword}' WHERE user_name = '${username}'`
-        connection.query(stmt, (err, results) => {
-            if (err) throw err;
-            console.log(results);
+    let stmt = `SELECT * FROM pins WHERE user_name='${username}'`;
+    connection.query(stmt, (err, results) => {
+        if (err) throw err;
 
-            res.send("Password changed successfully!");
+        if (results.length === 0) {
+            return res.send("Not a valid username");
+        }
+        // if the user_name provided exists
+        if (results.length > 0) {
+            // check to see if the pin provided matches the database
+            if (results[0].pin === pin) {
+                try {
+                    const salt = await bcrypt.genSalt(10);
+                    const hashedPassword = await bcrypt.hash(password1, salt);
+                    let stmt = `UPDATE users SET password = '${hashedPassword}' WHERE user_name = '${username}'`
+                    connection.query(stmt, (err, results) => {
+                        if (err) throw err;
+                        console.log(results);
 
-        })
-    } catch {
-        res.send('Password change failed!');
+                        res.send("Password changed successfully!");
 
-    }
+                    })
+                } catch {
+                    res.send('Password change failed!');
+
+                }
+            } else {
+                // the pin does not match the database
+                return res.send('Invalid pin!');
+            }
+        }
+    });
+
+
 
 })
 
@@ -553,8 +573,8 @@ app.post("/forget_password", (req, res) => {
 
         if (results.length > 0) {
             let pin = await pinGen(4);
-            let stmt = `INSERT INTO pins (email_address, pin) VALUES (?)`;
-            let values = [email, pin]
+            let stmt = `INSERT INTO pins (user_name, email_address, pin) VALUES (?)`;
+            let values = [results[0].user_name, email, pin]
             connection.query(stmt, [values], (err, results) => {
                 if (err) throw err;
                 console.log(results);
@@ -750,7 +770,7 @@ app.post("/auth", async (req, res) => {
                 console.log(err);
                 res.sendStatus(500);
                 throw err;
-                
+
 
             }
         }
@@ -989,7 +1009,7 @@ app.post('/disposal', redirectLogin, async (req, res) => {
 
     } catch (err) {
         next(err);
-        
+
     }
 
 
@@ -1080,7 +1100,7 @@ setInterval(() => {
         if (err) throw err;
         console.log(`Keeping the connection to DB constant ${results[0]}`)
     })
-},28800000);
+}, 28800000);
 
 app.listen(PORT, console.log(`Listening on http://localhost:${PORT}`));
 
