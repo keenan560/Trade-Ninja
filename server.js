@@ -486,8 +486,12 @@ app.post("/change_password", async (req, res) => {
                     connection.query(stmt, (err, results) => {
                         if (err) throw err;
                         console.log(results);
+                        connection.query(`DELETE FROM pins WHERE user_name ='${username}'`, (err, results) => {
+                            if (err) throw err;
+                            console.log(results);
+                            res.send("Password changed successfully!");
+                        });
 
-                        res.send("Password changed successfully!");
 
                     })
                 } catch {
